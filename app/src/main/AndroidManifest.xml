@@ -130,19 +130,24 @@
 
         <receiver android:name=".receiver.SmsBroadcastReceiver"
                   android:enabled="true"
-                  android:permission="android.permission.BROADCAST_SMS">
+                  android:permission="android.permission.BROADCAST_SMS"
+                  android:exported="true">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.BootReceiver" android:enabled="true">
+        <receiver android:name=".receiver.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.PackageReplacedReceiver" android:enabled="true">
+        <receiver android:name=".receiver.PackageReplacedReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
@@ -157,7 +162,8 @@
 
         <!-- BroadcastReceiver that listens for incoming SMS messages -->
         <receiver android:name=".compat.SmsReceiver"
-                android:permission="android.permission.BROADCAST_SMS">
+                android:permission="android.permission.BROADCAST_SMS"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
             </intent-filter>
@@ -165,7 +171,8 @@
 
         <!-- BroadcastReceiver that listens for incoming MMS messages -->
         <receiver android:name=".compat.MmsReceiver"
-            android:permission="android.permission.BROADCAST_WAP_PUSH">
+            android:permission="android.permission.BROADCAST_WAP_PUSH"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
                 <data android:mimeType="application/vnd.wap.mms-message" />
