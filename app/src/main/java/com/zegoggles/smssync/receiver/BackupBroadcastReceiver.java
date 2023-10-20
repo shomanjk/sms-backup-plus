@@ -30,6 +30,7 @@ public class BackupBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (LOCAL_LOGV) Log.v(TAG, "onReceive(" + context + "," + intent + ")");
+        //Log.e(TAG, "onReceive(" + context + "," + intent + ")");
 
         if (BACKUP_ACTION.equals(intent.getAction())) {
             backupRequested(context, intent);

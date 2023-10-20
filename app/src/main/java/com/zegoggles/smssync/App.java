@@ -22,6 +22,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -41,6 +42,7 @@ import com.squareup.otto.Subscribe;
 import com.zegoggles.smssync.activity.events.AutoBackupSettingsChangedEvent;
 import com.zegoggles.smssync.compat.GooglePlayServices;
 import com.zegoggles.smssync.preferences.Preferences;
+import com.zegoggles.smssync.receiver.BackupBroadcastReceiver;
 import com.zegoggles.smssync.receiver.BootReceiver;
 import com.zegoggles.smssync.receiver.SmsBroadcastReceiver;
 import com.zegoggles.smssync.service.BackupJobs;
@@ -103,6 +105,13 @@ public class App extends Application {
             }
         }
         register(this);
+
+        BackupBroadcastReceiver backupBroadcastReceiver = new BackupBroadcastReceiver();
+        int receiverFlags = 0;
+        if (Build.VERSION.SDK_INT >= 34)
+            receiverFlags = RECEIVER_NOT_EXPORTED;
+        registerReceiver(backupBroadcastReceiver,
+                new IntentFilter("com.zegoggles.smssync.BACKUP"), receiverFlags);
     }
 
     @Subscribe public void autoBackupSettingsChanged(final AutoBackupSettingsChangedEvent event) {
