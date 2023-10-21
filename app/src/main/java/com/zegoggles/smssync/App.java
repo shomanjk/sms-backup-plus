@@ -28,7 +28,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
 import androidx.annotation.Nullable;
@@ -43,7 +42,6 @@ import com.zegoggles.smssync.activity.events.AutoBackupSettingsChangedEvent;
 import com.zegoggles.smssync.compat.GooglePlayServices;
 import com.zegoggles.smssync.preferences.Preferences;
 import com.zegoggles.smssync.receiver.BackupBroadcastReceiver;
-import com.zegoggles.smssync.receiver.BootReceiver;
 import com.zegoggles.smssync.receiver.SmsBroadcastReceiver;
 import com.zegoggles.smssync.service.BackupJobs;
 
@@ -68,7 +66,23 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         setupStrictMode();
+
+        int receiverFlags = RECEIVER_EXPORTED;
+
+        SmsBroadcastReceiver smsBroadcastReceiver = new SmsBroadcastReceiver();
+        IntentFilter intentFilter21 = new IntentFilter();
+        intentFilter21.addAction(SmsBroadcastReceiver.SMS_RECEIVED_1);
+        intentFilter21.addAction(SmsBroadcastReceiver.SMS_RECEIVED_2);
+        intentFilter21.setPriority(Integer.MAX_VALUE);
+        registerReceiver(smsBroadcastReceiver, intentFilter21, receiverFlags);
+
+        BackupBroadcastReceiver backupBroadcastReceiver = new BackupBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter("com.zegoggles.smssync.BACKUP");
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(backupBroadcastReceiver, intentFilter, receiverFlags);
+
         gcmAvailable = GooglePlayServices.isAvailable(this);
         preferences = new Preferences(this);
         preferences.migrate();
@@ -105,13 +119,6 @@ public class App extends Application {
             }
         }
         register(this);
-
-        BackupBroadcastReceiver backupBroadcastReceiver = new BackupBroadcastReceiver();
-        int receiverFlags = 0;
-        if (Build.VERSION.SDK_INT >= 34)
-            receiverFlags = RECEIVER_NOT_EXPORTED;
-        registerReceiver(backupBroadcastReceiver,
-                new IntentFilter("com.zegoggles.smssync.BACKUP"), receiverFlags);
     }
 
     @Subscribe public void autoBackupSettingsChanged(final AutoBackupSettingsChangedEvent event) {
@@ -185,9 +192,10 @@ public class App extends Application {
         NotificationManagerCompat.from(this).createNotificationChannel(channel);
     }
 
+    /** @noinspection unused*/
     private void setBroadcastReceiversEnabled(boolean enabled) {
-        enableOrDisableComponent(enabled, SmsBroadcastReceiver.class);
-        enableOrDisableComponent(enabled, BootReceiver.class);
+        // enableOrDisableComponent(enabled, SmsBroadcastReceiver.class);
+        // enableOrDisableComponent(enabled, BootReceiver.class);
     }
 
     private void enableOrDisableComponent(boolean enabled, Class<?> component) {

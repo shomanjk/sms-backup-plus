@@ -33,7 +33,7 @@ public class SmsReceiver extends BroadcastReceiver {
     private final ThreadHelper threadHelper = new ThreadHelper();
 
     @Override public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive("+intent+")");
+        Log.e(TAG, "onReceive("+intent+")");
         if (isSmsBackupDefaultSmsApp(context)) {
 
             final SmsMessage[] messages = getMessagesFromIntent(intent);
