@@ -75,6 +75,7 @@ public class App extends Application {
         IntentFilter intentFilter21 = new IntentFilter();
         intentFilter21.addAction(SmsBroadcastReceiver.SMS_RECEIVED_1);
         intentFilter21.addAction(SmsBroadcastReceiver.SMS_RECEIVED_2);
+        intentFilter21.addAction(SmsBroadcastReceiver.MMS_RECEIVED);
         intentFilter21.setPriority(Integer.MAX_VALUE);
         registerReceiver(smsBroadcastReceiver, intentFilter21, receiverFlags);
 
@@ -198,6 +199,7 @@ public class App extends Application {
         // enableOrDisableComponent(enabled, BootReceiver.class);
     }
 
+    /** @noinspection unused*/
     private void enableOrDisableComponent(boolean enabled, Class<?> component) {
         if (LOCAL_LOGV) {
             Log.v(TAG, "enableOrDisableComponent("+enabled+", "+component.getSimpleName()+")");
