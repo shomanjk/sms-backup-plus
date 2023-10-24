@@ -1,6 +1,7 @@
 package com.zegoggles.smssync.compat;
 
 import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.role.RoleManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -32,6 +33,7 @@ import static com.zegoggles.smssync.App.TAG;
 public class SmsReceiver extends BroadcastReceiver {
     private final ThreadHelper threadHelper = new ThreadHelper();
 
+    @SuppressLint("UnsafeProtectedBroadcastReceiver")
     @Override public void onReceive(Context context, Intent intent) {
         Log.e(TAG, "onReceive("+intent+")");
         if (isSmsBackupDefaultSmsApp(context)) {
