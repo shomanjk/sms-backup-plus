@@ -17,6 +17,7 @@
 package com.zegoggles.smssync;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -28,6 +29,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
 import androidx.annotation.Nullable;
@@ -64,6 +66,7 @@ public class App extends Application {
     private Preferences preferences;
     private BackupJobs backupJobs;
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     public void onCreate() {
         super.onCreate();
@@ -87,7 +90,10 @@ public class App extends Application {
         BackupBroadcastReceiver backupBroadcastReceiver = new BackupBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter("com.zegoggles.smssync.BACKUP");
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(backupBroadcastReceiver, intentFilter, RECEIVER_EXPORTED);
+        if (Build.VERSION.SDK_INT >= 26)
+            registerReceiver(backupBroadcastReceiver, intentFilter, RECEIVER_EXPORTED);
+        else
+            registerReceiver(backupBroadcastReceiver, intentFilter);
 
         gcmAvailable = GooglePlayServices.isAvailable(this);
         preferences = new Preferences(this);
