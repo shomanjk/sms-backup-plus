@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Removed
+
+- Google Play in-app Donate preference, BillingClient dependency, and donation
+  activity (broken on this sideload fork; may return later as a fork funding link).
+
 ## [0.1.2] - 2026-07-14
 
 `versionCode` 1804.

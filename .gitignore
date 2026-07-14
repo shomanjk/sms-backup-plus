@@ -46,6 +46,9 @@ mapping.txt
 seeds.txt
 unused.txt
 
+# Local pulled device APKs / rollback copies (never commit)
+backup-apks/
+
 # ProGuard local overrides
 proguard.cfg
 proguard-project.txt

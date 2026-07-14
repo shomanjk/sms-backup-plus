@@ -63,8 +63,6 @@
   <string name="permission_read_contacts">Toegang tot contacten</string>
   <string name="permission_unknown">Onbekend</string>
 
-
-
   <string name="status_auth_failure_details_xoauth">XOAuth-fout. Verzeker uzelf er a.u.b. van dat u IMAP hebt ingeschakeld in de Gmail-instellingen van uw account.</string>
   <string name="status_auth_failure_details_plain">IMAP-autorisatiefout.
   Controleer of dat uw login en wachtwoord correct ingesteld zijn.</string>
@@ -92,7 +90,6 @@
 
   <string name="ui_authentication_label">Authenticatie</string>
   <string name="plain">Gewone tekst</string>
-
 
   <string name="ui_imap_folder_label">Gmail-label</string>
   <string name="ui_imap_folder_label_dialog_msg">Geback-upte sms\'en zullen dit label krijgen im Gmail.</string>
@@ -168,7 +165,6 @@
 
     <string name="ui_dialog_missing_credentials_msg_plain">U moet eerst uw gebruikersnaam en wachtwoord instellen.</string>
 
-
   <string name="ui_dialog_invalid_imap_folder_title">Ongeldig labelnaam</string>
   <string name="ui_dialog_invalid_imap_folder_msg">De labelnaam mag geen spaties bevatten (aan het begin of einde).</string>
   <string name="ui_dialog_first_sync_title">Eerste back-up</string>
@@ -179,7 +175,6 @@
   <string name="ui_dialog_access_token_error_title">Autorisatie mislukt</string>
   <string name="ui_dialog_access_token_error_msg">Kon geen toegangstoken verkrijgen. Verzeker uzelf ervan dat u \"Toegang geven\" selecteerde.
   </string>
-
 
   <string name="ui_dialog_connect_msg">Een browservenster zal geopend worden en u vragen om u aan te melden bij Gmail om %1$s toegang te geven tot uw e-mails.</string>
   <string name="ui_dialog_disconnect_msg">Weet u het zeker? U zal uw account opnieuw moeten autoriseren nadat u de verbinding hebt verbroken en de lokale synchronisatiestatus zal opnieuw worden ingesteld.</string>
@@ -245,8 +240,6 @@
   <string name="_3mins">3 min.</string>
   <string name="_30mins">30 min.</string>
 
-
-
   <string name="security_none">Geen</string>
 
   <string name="ui_third_party_integration_label">integratie met derden</string>
@@ -257,7 +250,6 @@
   <string name="ui_backup_calllog_settings_label">Instellingen oproepgeschiedenis</string>
 
   <string name="auto_backup_settings">Instellingen autom. back-up</string>
-
 
   <string name="ui_restore_settings_label">Instellingen terugzetten</string>
 
@@ -271,8 +263,6 @@
   <string name="sms">Sms</string>
   <string name="mms">Mms</string>
   <string name="calllog">Oproepgeschiedenis</string>
-
-
 
   <string name="app_log_skip_backup_already_running">Overgeslagen omdat back-up al bezig is</string>
   <string name="app_log_skip_backup_skip_messages">Alle berichten overgeslagen</string>
@@ -319,22 +309,9 @@
   <string name="ui_dialog_account_manager_token_error">Kon geen token verkrijgen van systeem. Wilt u authentificeren via de browser?</string>
   <string name="select_google_account">Selecteer een Google-account</string>
 
-  <!-- donation related -->
-  <string name="donate">Doneren</string>
-  <string name="donate_summary">Met veilige Google Play Store in-appaankopen.</string>
+<!-- purchase errors -->
 
-  <string name="ui_dialog_donate_message">Kies een bedrag:</string>
-  <string name="ui_donation_success_message">Donatie gelukt, hartelijk bedankt!</string>
-  <string name="ui_donation_failure_message">Donatie mislukt: %1$s</string>
-
-  <!-- purchase errors -->
-  <string name="donation_error_iab_unavailable">In-appaankopen zijn niet beschikbaar</string>
-  <string name="donation_error_unavailable">niet beschikbaar</string>
-  <string name="donation_error_canceled">geannuleerd</string>
-  <string name="donation_error_already_owned">u heeft al gedoneerd</string>
-  <string name="donation_unspecified_error">niet nader omschreven fout: %1$d</string>
-
-  <string name="error_no_sms_default_package">Geen standaard sms-app ingesteld.</string>
+<string name="error_no_sms_default_package">Geen standaard sms-app ingesteld.</string>
   <string name="ui_dialog_sms_default_package_change_title">Vereist appwijziging</string>
   <string name="ui_dialog_sms_default_package_change_msg">
     U moet SMS Backup+ instellen als uw standaard sms-app tijdens het herstellen.

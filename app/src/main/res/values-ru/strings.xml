@@ -61,7 +61,6 @@
   <string name="ui_settings_advanced_label">Расширенные настройки</string>
   <string name="ui_settings_advanced_desc">Настройки расписания, уведомлений и пр.</string>
 
-
     <string name="imap_settings">Настройки IMAP</string>
   <string name="ui_login_label">Логин</string>
   <string name="ui_login_desc">Ваш логин или адрес email.</string>
@@ -84,7 +83,6 @@
   <string name="ui_max_items_per_restore_label">Количество SMS для восстановления</string>
   <string name="ui_max_items_per_restore_desc">Количество новейших SMS для восстановления.</string>
 
-
   <string name="ui_restore_starred_only_label">Отмеченные SMS</string>
   <string name="ui_restore_starred_only_desc">Восстанавливать только отмеченные sms.</string>
 
@@ -105,7 +103,6 @@
 
    <string name="ui_imap_folder_calllog_label">Ярлык для журнала вызовов</string>
     <string name="ui_imap_folder_calllog_label_dialog_msg">Сохранённым звонкам будет присвоен этот ярлык Gmail.</string>
-
 
   <string name="ui_mark_as_read_label">Отметить как прочитанные</string>
   <string name="ui_mark_as_read_desc">Отметить сообщения как прочитанные в Gmail?</string>
@@ -259,18 +256,7 @@
   </string>
   <string name="select_google_account">Выберите аккаунт Google</string>
 
-  <!-- donation related -->
-  <string name="donate">Пожертвование</string>
-  <string name="donate_summary">Будет использована безопасная транзакция Google Play Store.</string>
+<!-- purchase errors -->
 
-  <string name="ui_dialog_donate_message">Выберите сумму:</string>
-  <string name="ui_donation_success_message">Отправлено, спасибо за поддержку!</string>
-  <string name="ui_donation_failure_message">Не удалось отправить пожертвование: %1$s</string>
-
-  <!-- purchase errors -->
-  <string name="donation_error_iab_unavailable">Сервис покупок в приложениях недоступен</string>
-  <string name="donation_error_unavailable">недоступно</string>
-  <string name="donation_error_canceled">отменено</string>
-  <string name="donation_error_already_owned">пожертвование уже выполнено</string>
-    <string name="ui_dark_theme_label">Ночной режим</string>
+<string name="ui_dark_theme_label">Ночной режим</string>
 </resources>
