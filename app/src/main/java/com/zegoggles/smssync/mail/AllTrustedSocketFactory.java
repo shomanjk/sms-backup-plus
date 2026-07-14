@@ -5,6 +5,7 @@ import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.ssl.TrustedSocketFactory;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -36,6 +37,9 @@ class AllTrustedSocketFactory implements TrustedSocketFactory {
             trustedSocket = socketFactory.createSocket(socket, host, port, true);
         }
 
+        if (trustedSocket instanceof SSLSocket) {
+            SniSslSocketHelper.applySni((SSLSocket) trustedSocket, host);
+        }
         return trustedSocket;
     }
 

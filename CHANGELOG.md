@@ -12,6 +12,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-07-14
+
+`versionCode` 1805.
+
+### Fixed
+
+- IMAP TLS SNI on Android 12+ / high `targetSdk`: stop using K9’s blocked
+  Conscrypt `SSLSocket#setHostname` reflection. Apply SNI via public
+  `SSLParameters.setServerNames` (`SniAwareTrustedSocketFactory`).
+- IMAP connect on dual-stack hosts (e.g. Gmail): try IPv4 before IPv6 so broken
+  IPv6 paths do not burn K-9’s per-address timeouts (~5s each) before a working
+  IPv4 connect (`Ipv4PreferringImapStore`).
+- Edge-to-edge on `targetSdk` 35+: pad main UI for system bars so the toolbar
+  and Backup/Restore controls are not under the status / navigation bars.
+
 ### Removed
 
 - Google Play in-app Donate preference, BillingClient dependency, and donation

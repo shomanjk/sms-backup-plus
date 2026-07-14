@@ -26,13 +26,13 @@ import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Folder.FolderType;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.ssl.DefaultTrustedSocketFactory;
 import com.fsck.k9.mail.ssl.TrustedSocketFactory;
 import com.fsck.k9.mail.store.imap.ImapFolder;
 import com.fsck.k9.mail.store.imap.ImapMessage;
 import com.fsck.k9.mail.store.imap.ImapResponse;
 import com.fsck.k9.mail.store.imap.ImapSearcher;
 import com.fsck.k9.mail.store.imap.ImapStore;
+import com.fsck.k9.mail.store.imap.Ipv4PreferringImapStore;
 import com.zegoggles.smssync.preferences.DataTypePreferences;
 
 import java.io.IOException;
@@ -52,13 +52,13 @@ import static com.zegoggles.smssync.mail.Headers.DATATYPE;
 import static java.util.Collections.sort;
 import static java.util.Locale.ENGLISH;
 
-public class BackupImapStore extends ImapStore {
+public class BackupImapStore extends Ipv4PreferringImapStore {
     private final Map<DataType, BackupFolder> openFolders = new HashMap<DataType, BackupFolder>();
 
     public BackupImapStore(final Context context, final String uri,
                            boolean trustAllCertificates) throws MessagingException {
         super(new BackupStoreConfig(uri),
-            trustAllCertificates ? AllTrustedSocketFactory.INSTANCE : new DefaultTrustedSocketFactory(context),
+            trustAllCertificates ? AllTrustedSocketFactory.INSTANCE : new SniAwareTrustedSocketFactory(context),
             (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE));
     }
 

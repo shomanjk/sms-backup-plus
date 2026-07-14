@@ -2,7 +2,6 @@ package com.zegoggles.smssync.mail;
 
 import android.annotation.SuppressLint;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.ssl.DefaultTrustedSocketFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -46,7 +45,7 @@ public class BackupImapStoreTest {
     @Test public void testShouldCreateCorrectTrustFactoryForTrustedSSLUrl() throws Exception {
         String uri = "imap+ssl+://xoauth:foooo@imap.gmail.com";
         BackupImapStore store = new BackupImapStore(RuntimeEnvironment.application, uri, false);
-        assertThat(store.getTrustedSocketFactory()).isInstanceOf(DefaultTrustedSocketFactory.class);
+        assertThat(store.getTrustedSocketFactory()).isInstanceOf(SniAwareTrustedSocketFactory.class);
     }
 
     @Test public void testShouldCreateCorrectTrustFactoryForTrustAllSSLUrl() throws Exception {
@@ -58,7 +57,7 @@ public class BackupImapStoreTest {
     @Test public void testShouldCreateCorrectTrustFactoryForTrustedTLSUrl() throws Exception {
         String uri = "imap+tls+://xoauth:foooo@imap.gmail.com";
         BackupImapStore store = new BackupImapStore(RuntimeEnvironment.application, uri, false);
-        assertThat(store.getTrustedSocketFactory()).isInstanceOf(DefaultTrustedSocketFactory.class);
+        assertThat(store.getTrustedSocketFactory()).isInstanceOf(SniAwareTrustedSocketFactory.class);
     }
 
     @Test public void shouldHaveToStringWithObfuscatedStoreURI() throws Exception {
