@@ -19,7 +19,7 @@ Guidance for AI agents and humans working in this repository.
 **Current app identity**
 
 - `applicationId`: `com.zegoggles.smssync` (same as Play / henrichg — sideload requires uninstall; signatures differ)
-- `versionName`: `0.1.1` / `versionCode`: `1803` (fork SemVer; independent of upstream)
+- `versionName`: `0.1.2` / `versionCode`: `1804` (fork SemVer; independent of upstream)
 - `minSdkVersion`: `24` (Android 7+)
 - `compileSdk`: `36` / `targetSdkVersion`: `35`
 
@@ -55,6 +55,23 @@ Henrichg’s ports fixed **how backups get triggered** (broadcasts/receivers). T
 - `app/src/main/java/com/zegoggles/smssync/receiver/SmsBroadcastReceiver.java`
 - `app/src/main/AndroidManifest.xml`
 - `app/build.gradle` / root `build.gradle`
+- Version / about UX: `Preferences.consumeVersionDialog()`, `Dialogs.VersionNotes`,
+  `ui_dialog_welcome_*` / `ui_dialog_whats_new_*` in `strings.xml`,
+  `app/src/main/assets/about.html` (menu About only)
+
+## Release / user-facing copy checklist
+
+When shipping a user-visible change (or a version bump), **proactively update or
+suggest updating**:
+
+1. `CHANGELOG.md`
+2. `ui_dialog_whats_new_msg` (upgrade dialog; keep short)
+3. `about.html` “New in this release” list (and fork warnings if status changed)
+4. `ui_dialog_welcome_msg` only if install/disclaimer guidance changed
+5. `versionName` / `versionCode` in `app/build.gradle` plus this file and
+   `.cursor/rules/fork-context.mdc` when bumping
+
+Do **not** claim auto-backup is fixed in those dialogs until WorkManager ships.
 
 ## Agent constraints
 

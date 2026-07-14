@@ -12,6 +12,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-14
+
+`versionCode` 1804.
+
+### Changed
+
+- First-launch / upgrade no longer opens the full About page. Shows a short
+  Welcome or What's new dialog instead; menu → About keeps credits and docs.
+- About HTML updated for this fork (warnings, links, henrichg credit, release notes).
+
 ## [0.1.1] - 2026-07-14
 
 `versionCode` 1803.

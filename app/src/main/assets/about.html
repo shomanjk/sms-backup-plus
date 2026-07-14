@@ -7,8 +7,18 @@
   </head>
 
   <body>
+    <p><strong>Unofficial experimental fork</strong>
+      (<a href="https://github.com/shomanjk/sms-backup-plus">shomanjk/sms-backup-plus</a>).
+      Not affiliated with
+      <a href="https://github.com/jberkel">jberkel</a> or
+      <a href="https://github.com/henrichg">henrichg</a>.
+      <strong>Not ready for daily use</strong> — automatic backup may still fail
+      until WorkManager replaces Firebase JobDispatcher.</p>
+
     <p>
-      <small>Author: <a href="https://github.com/jberkel/">Jan Berkel</a> (and many others, see credits below)</small>
+      <small>Upstream author:
+        <a href="https://github.com/jberkel/">Jan Berkel</a>
+        (and many others, see credits below)</small>
     </p>
 
     <p>
@@ -18,7 +28,13 @@
 
     <h3>New in this release:</h3>
     <ul class="news">
-      <li>0.1.0 — experimental maintained fork (Android 7+ trigger ports; not daily-use yet)</li>
+      <li>0.1.2 — Short Welcome / What's new dialogs on first launch and
+        upgrades; full About page (menu) remains for credits and docs.</li>
+      <li>0.1.1 — Fixed crash on startup on Android 12+ (API 31+) by forcing the
+        AlarmManager scheduler before JobDispatcher PendingIntents without
+        mutability flags.</li>
+      <li>0.1.0 — Experimental maintained fork (Android 7+ trigger ports;
+        not daily-use yet)</li>
     </ul>
     <p>See <a href="https://github.com/shomanjk/sms-backup-plus/blob/master/CHANGELOG.md">CHANGELOG.md on GitHub</a>
       for the full list. Upstream history is archived in
@@ -26,17 +42,23 @@
 
     <h3>Information</h3>
     <p>
-      Please visit the
-      <a href="https://github.com/jberkel/sms-backup-plus/blob/master/README.md#readme">SMS Backup+
-        github</a> page for more information. Also make sure to check the
-      <a href="https://github.com/jberkel/sms-backup-plus/blob/master/README.md#faq">FAQ</a> before
-      reporting a bug.
+      Fork docs and known limitations:
+      <a href="https://github.com/shomanjk/sms-backup-plus/blob/master/README.md#readme">README</a>,
+      <a href="https://github.com/shomanjk/sms-backup-plus/blob/master/ROADMAP.md">ROADMAP</a>.
+      Upstream project page and FAQ (original SMS Backup+):
+      <a href="https://github.com/jberkel/sms-backup-plus/blob/master/README.md#readme">jberkel/sms-backup-plus</a>,
+      <a href="https://github.com/jberkel/sms-backup-plus/blob/master/README.md#faq">FAQ</a>.
     </p>
 
     <h3>Credits</h3>
     <p>Many thanks to:</p>
     <ul class="thanks">
       <li>Christoph Studer, the original author of SMS Backup</li>
+      <li>Jan Berkel and contributors to
+        <a href="https://github.com/jberkel/sms-backup-plus">jberkel/sms-backup-plus</a>
+        (including RCS / group-thread work)</li>
+      <li><a href="https://github.com/henrichg">henrichg</a> for Android 7+ backup
+        trigger / receiver fixes ported into this fork</li>
       <li>The <a href="https://github.com/k9mail/k-9/">K-9 Mail</a> project for IMAP code</li>
       <li><a href="https://github.com/bjdodson">Ben Dodson</a> (Contacts 2.0 + MMS support)</li>
       <li><a href="https://github.com/dicer">Felix Knecht</a> Call log backup code</li>
@@ -89,7 +111,8 @@
     <h3>Privacy Policy</h3>
     <p>
       To function properly SMS Backup+ needs to have full access to various types of private data stored on your phone as
-      well as your email account. Take a moment to read the <a href="https://jberkel.github.io/sms-backup-plus/privacy-policy/">Privacy Policy</a>.
+      well as your email account. Take a moment to read the <a href="https://jberkel.github.io/sms-backup-plus/privacy-policy/">Privacy Policy</a>
+      (upstream; this fork has not published a separate policy).
     </p>
   </body>
 </html>

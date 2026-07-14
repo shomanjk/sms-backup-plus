@@ -267,15 +267,29 @@ public class Preferences {
         return preferences.getBoolean(CONFIRM_ACTION.key, false);
     }
 
-    public boolean shouldShowAboutDialog() {
+    /**
+     * Dialog to show after a versionCode bump: welcome on first install,
+     * short release notes on upgrade. Full credits live under menu About.
+     */
+    public enum VersionDialogKind {
+        NONE,
+        FIRST_INSTALL,
+        UPGRADE
+    }
+
+    /**
+     * If {@code versionCode} advanced since last launch, mark it as seen and
+     * return which short dialog to show. Returns {@link VersionDialogKind#NONE}
+     * when already up to date.
+     */
+    public VersionDialogKind consumeVersionDialog() {
         final int currentVersionCode = App.getVersionCode(context);
         final int lastSeenCode = preferences.getInt(LAST_VERSION_CODE.key, 0);
-        if (lastSeenCode < currentVersionCode) {
-            preferences.edit().putInt(LAST_VERSION_CODE.key, currentVersionCode).commit();
-            return true;
-        } else {
-            return false;
+        if (lastSeenCode >= currentVersionCode) {
+            return VersionDialogKind.NONE;
         }
+        preferences.edit().putInt(LAST_VERSION_CODE.key, currentVersionCode).commit();
+        return lastSeenCode == 0 ? VersionDialogKind.FIRST_INSTALL : VersionDialogKind.UPGRADE;
     }
 
     public boolean isUseOldScheduler() {

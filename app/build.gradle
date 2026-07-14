@@ -14,8 +14,8 @@ android {
         applicationId 'com.zegoggles.smssync'
         minSdkVersion 24
         targetSdkVersion 35
-        versionCode 1803
-        versionName '0.1.1'
+        versionCode 1804
+        versionName '0.1.2'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         ndk.abiFilters 'armeabi-v7a','arm64-v8a'
     }

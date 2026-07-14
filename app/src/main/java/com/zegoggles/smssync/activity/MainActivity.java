@@ -91,8 +91,10 @@ import static com.zegoggles.smssync.activity.Dialogs.Type.OAUTH2_ACCESS_TOKEN_ER
 import static com.zegoggles.smssync.activity.Dialogs.Type.OAUTH2_ACCESS_TOKEN_PROGRESS;
 import static com.zegoggles.smssync.activity.Dialogs.Type.RESET;
 import static com.zegoggles.smssync.activity.Dialogs.Type.SMS_DEFAULT_PACKAGE_CHANGE;
+import static com.zegoggles.smssync.activity.Dialogs.Type.VERSION_NOTES;
 import static com.zegoggles.smssync.activity.Dialogs.Type.VIEW_LOG;
 import static com.zegoggles.smssync.activity.Dialogs.Type.WEB_CONNECT;
+import static com.zegoggles.smssync.activity.Dialogs.VersionNotes.FIRST_INSTALL;
 import static com.zegoggles.smssync.activity.auth.AccountManagerAuthActivity.ACTION_ADD_ACCOUNT;
 import static com.zegoggles.smssync.activity.auth.AccountManagerAuthActivity.ACTION_FALLBACK_AUTH;
 import static com.zegoggles.smssync.activity.auth.AccountManagerAuthActivity.EXTRA_ACCOUNT;
@@ -142,8 +144,15 @@ public class MainActivity extends ThemeActivity implements
         if (bundle == null) {
             showFragment(new MainSettings(), null);
         }
-        if (preferences.shouldShowAboutDialog()) {
-            showDialog(ABOUT);
+        switch (preferences.consumeVersionDialog()) {
+            case FIRST_INSTALL:
+                showDialog(VERSION_NOTES, new BundleBuilder().putBoolean(FIRST_INSTALL, true).build());
+                break;
+            case UPGRADE:
+                showDialog(VERSION_NOTES, new BundleBuilder().putBoolean(FIRST_INSTALL, false).build());
+                break;
+            case NONE:
+                break;
         }
         checkDefaultSmsApp();
         requestPermissionsIfNeeded();

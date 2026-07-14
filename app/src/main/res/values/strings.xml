@@ -174,6 +174,14 @@
   <string name="ui_dialog_first_sync_title">First backup</string>
   <string name="ui_dialog_first_sync_msg">Backup or skip all messages currently stored on this device?</string>
   <string name="ui_dialog_first_sync_msg_batched">Backup or skip all messages currently stored on this device?\n\nNote: The backup will be split into batches of %1$d messages.</string>
+
+  <string name="ui_dialog_welcome_title">Welcome</string>
+  <string name="ui_dialog_welcome_msg">This is an unofficial experimental fork of SMS Backup+. It is not affiliated with jberkel or henrichg, and it is not ready for daily use — automatic backup may still fail.\n\nThis build uses the same application ID as the Play Store and henrichg apps. Uninstall those first. If your messages are already backed up in IMAP, choose Skip on the first backup to avoid uploading them again.</string>
+  <string name="ui_dialog_welcome_more_info">More info</string>
+  <string name="ui_dialog_whats_new_title">What\'s new in %1$s</string>
+  <string name="ui_dialog_whats_new_msg">• First-launch and upgrades show a short Welcome / What\'s new dialog instead of the full About page.\n• Menu → About keeps the full fork-aware credits and docs.\n\nAutomatic backup is still experimental until WorkManager ships.</string>
+  <string name="ui_dialog_whats_new_changelog">Changelog</string>
+
   <string name="ui_dialog_access_token_msg">Requesting access…</string>
 
   <string name="ui_dialog_access_token_error_title">Authorisation failure</string>

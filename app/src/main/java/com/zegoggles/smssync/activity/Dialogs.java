@@ -62,6 +62,8 @@ public class Dialogs {
         INVALID_IMAP_FOLDER(InvalidImapFolder.class),
         CONFIRM_ACTION(ConfirmAction.class),
         SMS_DEFAULT_PACKAGE_CHANGE(SmsRequestDefaultPackage.class),
+        // shown after versionCode bumps (not the full About page)
+        VERSION_NOTES(VersionNotes.class),
         // menu
         ABOUT(About.class),
         RESET(Reset.class),
@@ -141,6 +143,43 @@ public class Dialogs {
             final String title = getString(R.string.ui_dialog_invalid_imap_folder_title);
             final String msg = getString(R.string.ui_dialog_invalid_imap_folder_msg);
             return createMessageDialog(title, msg, ic_dialog_alert);
+        }
+    }
+
+    public static class VersionNotes extends BaseFragment {
+        static final String FIRST_INSTALL = "first_install";
+        private static final String FORK_README_URL =
+                "https://github.com/shomanjk/sms-backup-plus";
+        private static final String FORK_CHANGELOG_URL =
+                "https://github.com/shomanjk/sms-backup-plus/blob/master/CHANGELOG.md";
+
+        @Override @NonNull
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final boolean firstInstall = getArguments() != null
+                    && getArguments().getBoolean(FIRST_INSTALL, false);
+            final String title = firstInstall
+                    ? getString(R.string.ui_dialog_welcome_title)
+                    : getString(R.string.ui_dialog_whats_new_title, App.getVersionName(getContext()));
+            final String message = firstInstall
+                    ? getString(R.string.ui_dialog_welcome_msg)
+                    : getString(R.string.ui_dialog_whats_new_msg);
+            final String neutralLabel = firstInstall
+                    ? getString(R.string.ui_dialog_welcome_more_info)
+                    : getString(R.string.ui_dialog_whats_new_changelog);
+            final String neutralUrl = firstInstall ? FORK_README_URL : FORK_CHANGELOG_URL;
+
+            return new AlertDialog.Builder(getContext())
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setIcon(R.drawable.ic_sms_backup)
+                    .setPositiveButton(ok, null)
+                    .setNeutralButton(neutralLabel, new OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(neutralUrl)));
+                        }
+                    })
+                    .create();
         }
     }
 
