@@ -12,6 +12,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-14
+
+`versionCode` 1803.
+
+### Fixed
+
+- Crash on startup on Android 12+ (API 31+): archived Firebase JobDispatcher
+  `GooglePlayDriver` creates `PendingIntent`s without mutability flags. Force
+  the AlarmManager scheduler before constructing `BackupJobs` on API 31+.
+
 ## [0.1.0] - 2026-07-14
 
 `versionCode` 1802.

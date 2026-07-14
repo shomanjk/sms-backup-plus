@@ -100,13 +100,21 @@ public class App extends Application {
             createNotificationChannel();
         }
 
-        backupJobs = new BackupJobs(this);
-
-        if (gcmAvailable) {
-            setBroadcastReceiversEnabled(false);
-        } else {
+        // Prefer AlarmManagerDriver before constructing BackupJobs. GooglePlayDriver
+        // (archived Firebase JobDispatcher) creates PendingIntents without mutability
+        // flags and crashes on API 31+ during App.onCreate.
+        if (!gcmAvailable) {
             Log.v(TAG, "Google Play Services not available, forcing use of old scheduler");
             preferences.setUseOldScheduler(true);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Log.v(TAG, "API 31+: forcing AlarmManager scheduler (JobDispatcher PendingIntent flags)");
+            preferences.setUseOldScheduler(true);
+        }
+
+        backupJobs = new BackupJobs(this);
+
+        if (gcmAvailable && !preferences.isUseOldScheduler()) {
+            setBroadcastReceiversEnabled(false);
         }
 
         K9MailLib.setDebugStatus(new K9MailLib.DebugStatus() {
