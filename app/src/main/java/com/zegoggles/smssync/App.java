@@ -68,9 +68,6 @@ public class App extends Application {
     private Preferences preferences;
     private BackupJobs backupJobs;
 
-    // Context.RECEIVER_EXPORTED, kept as a compat constant for compileSdk 29.
-    private static final int RECEIVER_EXPORTED_COMPAT = 0x2;
-
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     public void onCreate() {
@@ -136,8 +133,8 @@ public class App extends Application {
     }
 
     private void registerExportedReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(receiver, filter, RECEIVER_EXPORTED_COMPAT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
         } else {
             registerReceiver(receiver, filter);
         }

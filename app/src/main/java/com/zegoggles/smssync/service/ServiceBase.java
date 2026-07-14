@@ -43,6 +43,7 @@ import com.zegoggles.smssync.preferences.Preferences;
 import com.zegoggles.smssync.service.state.State;
 import com.zegoggles.smssync.utils.AppLog;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.net.ConnectivityManager.TYPE_WIFI;
 import static com.zegoggles.smssync.App.CHANNEL_ID;
@@ -201,7 +202,7 @@ public abstract class ServiceBase extends Service {
          return PendingIntent.getActivity(getApplicationContext(),
                  0,
                  intent,
-                 FLAG_UPDATE_CURRENT);
+                 FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE);
     }
 
     boolean isConnectedViaWifi() {

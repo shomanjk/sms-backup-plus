@@ -31,6 +31,7 @@ import com.firebase.jobdispatcher.RetryStrategy;
 import java.util.List;
 
 import static android.app.AlarmManager.RTC_WAKEUP;
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static com.firebase.jobdispatcher.FirebaseJobDispatcher.CANCEL_RESULT_SUCCESS;
 import static com.firebase.jobdispatcher.FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS;
@@ -124,7 +125,7 @@ class AlarmManagerDriver implements Driver, JobValidator {
         final Intent intent = (new Intent(ctx, SmsBackupService.class))
             .setAction(backupType.name());
 
-        return PendingIntent.getService(ctx, 0, intent, FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(ctx, 0, intent, FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE);
     }
 
     private static long scheduleTime(JobTrigger trigger) {

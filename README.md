@@ -22,6 +22,8 @@ This fork is **not available on the Google Play Store**. Build or install an APK
 
 See [ROADMAP.md](ROADMAP.md) for details.
 
+Release notes for this fork are in [CHANGELOG.md](CHANGELOG.md) (starting at `0.1.0`). Upstream / pre-fork history remains in [CHANGES](CHANGES) (archive).
+
 --------------------
 ## Reporting bugs
 

@@ -22,7 +22,9 @@ Completion criteria:
 
 ## Phase 3: Harden for Android 14 and 15
 
-- Audit foreground-service, background-start, exact-alarm, broadcast-receiver, and notification requirements.
+`compileSdk` is **36** and `targetSdk` is **35**. Remaining work is runtime behavior and OEM testing, not raising those numbers again (except a later bump to **target 36** if/when Play or device testing warrants it).
+
+- Audit foreground-service, background-start, exact-alarm, broadcast-receiver, and notification requirements (POST_NOTIFICATIONS runtime prompt, exact-alarm UX, FGS types).
 - Validate runtime permissions and restricted-setting behavior on clean installs and upgrades.
 - Test battery optimization, Doze, reboot, connectivity changes, and long-running backups on Android 14 and 15.
 - Document known OEM limitations and any user action needed for reliable scheduling.

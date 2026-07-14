@@ -19,8 +19,9 @@ Guidance for AI agents and humans working in this repository.
 **Current app identity**
 
 - `applicationId`: `com.zegoggles.smssync` (same as Play / henrichg — sideload requires uninstall; signatures differ)
-- `versionName`: `1.8.0-dev.1` / `versionCode`: `1801`
+- `versionName`: `0.1.0` / `versionCode`: `1802` (fork SemVer; independent of upstream)
 - `minSdkVersion`: `24` (Android 7+)
+- `compileSdk`: `36` / `targetSdkVersion`: `35`
 
 ## What was already done
 
@@ -32,6 +33,7 @@ Guidance for AI agents and humans working in this repository.
    - Incoming scheduler / related App + MainActivity wiring
 3. Documented experimental status in `README.md` and phases in `ROADMAP.md`.
 4. Temporary build bridge: archived Firebase JobDispatcher via JitPack (`googlearchive/firebase-jobdispatcher-android`) so `./gradlew assembleDebug` works until WorkManager.
+5. Fork release notes live in `CHANGELOG.md` (Keep a Changelog); upstream history archived in `CHANGES`.
 
 ## Goal / roadmap
 

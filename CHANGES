@@ -1,3 +1,10 @@
+*** ARCHIVE — this file is no longer updated. ***
+*** Current fork release notes: CHANGELOG.md (starts at 0.1.0) ***
+
+The entries below are preserved upstream / pre-fork history from jberkel
+SMS Backup+ (and related in-tree notes). They are not releases of the
+shomanjk experimental fork.
+
 == 1.6.0 (xxx) dd-mm-2019
 
   * Android minSdk now 14 (4.0, Ice Cream Sandwich)
