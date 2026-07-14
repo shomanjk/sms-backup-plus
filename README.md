@@ -1,13 +1,33 @@
-# SMS Backup+ <img src="https://raw.githubusercontent.com/jberkel/sms-backup-plus/master/metadata/play/assets/sms-backup.svg?sanitize=true" height="50px" alt="SMS Backup+ logo"/> [![Build Status SVG][]][Build Status] [![Open Source Helpers](https://www.codetriage.com/jberkel/sms-backup-plus/badges/users.svg)](https://www.codetriage.com/jberkel/sms-backup-plus)
+# SMS Backup+ <img src="https://raw.githubusercontent.com/jberkel/sms-backup-plus/master/metadata/play/assets/sms-backup.svg?sanitize=true" height="50px" alt="SMS Backup+ logo"/>
 
-[<img alt="Get it on Google Play" src="https://jberkel.github.io/sms-backup-plus/assets/img/google-play-badge.png" height="80pt"/>][Google Play Store] [<img alt="Get it on F-Droid" src="https://jberkel.github.io/sms-backup-plus/assets/img/f-droid-badge.svg" height="80pt"/>][F-Droid]
+> [!CAUTION]
+> **This is an unofficial experimental fork.** It is not affiliated with [jberkel](https://github.com/jberkel) or [henrichg](https://github.com/henrichg), and it is **not ready for daily use**. Automatic backup may still fail because the app currently relies on the deprecated Firebase JobDispatcher.
 
----------------------
+## Fork lineage
+
+This fork is based on [jberkel/sms-backup-plus](https://github.com/jberkel/sms-backup-plus), including the RCS and group-message fixes on its `master` branch. It also ports Android 7+ backup trigger and receiver fixes from [henrichg/sms-backup-plus](https://github.com/henrichg/sms-backup-plus). Credit to henrichg for diagnosing and implementing those Android 7+ backup trigger fixes.
+
+## Installing this fork
+
+This fork is **not available on the Google Play Store**. Build or install an APK from this fork only for testing.
+
+> [!WARNING]
+> This fork uses the same application ID, `com.zegoggles.smssync`, as the Play Store app and henrichg builds. Uninstall either of those builds before installing this one, or installation will fail because of a signing-certificate mismatch. Uninstalling wipes local sync preferences. If your messages are already backed up in IMAP, choose **Skip** on the first backup to avoid uploading them again.
+
+## Near-term roadmap
+
+1. Port henrichg's scheduler and receiver fixes.
+2. Replace Firebase JobDispatcher with WorkManager.
+3. Harden backup behavior for Android 14 and 15.
+
+See [ROADMAP.md](ROADMAP.md) for details.
+
+--------------------
 ## Reporting bugs
 
 Please read the [known issues](BUGS.md) before reporting any new issues; we already know about several significant issues, including Gmail login failures (for which there is a robust work-around), and problems with logging phone calls into calendars (which we are investigating).
 
----------------------
+--------------------
 ## Description
 
 This is a fork of the now-defunct Android backup tool
@@ -434,6 +454,7 @@ repository and submit a [pull request][About pull requests].
 ## <a id="credits">Credits</a>
 
   * [Christoph Studer](http://studer.tv/) Original author of SMS Backup (2009-2010)
+  * [henrichg](https://github.com/henrichg) - Android 7+ backup trigger and receiver fixes
   * [Ben Dodson](https://github.com/bjdodson) - Contacts 2.0 / MMS support
   * [Felix Knecht](https://github.com/dicer) - Call log backup code
   * [Michael Scharfstein](https://github.com/smike) - Call log calendar ICS support

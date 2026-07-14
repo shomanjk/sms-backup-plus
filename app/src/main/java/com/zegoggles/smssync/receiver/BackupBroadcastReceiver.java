@@ -29,8 +29,7 @@ public class BackupBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (LOCAL_LOGV) Log.e(TAG, "onReceive(" + context + "," + intent + ")");
-        //Log.e(TAG, "onReceive(" + context + "," + intent + ")");
+        if (LOCAL_LOGV) Log.v(TAG, "onReceive(" + context + "," + intent + ")");
 
         if (BACKUP_ACTION.equals(intent.getAction())) {
             backupRequested(context, intent);
@@ -39,10 +38,10 @@ public class BackupBroadcastReceiver extends BroadcastReceiver {
 
     private void backupRequested(Context context, Intent intent) {
         if (new Preferences(context).isAllow3rdPartyIntegration()) {
-            Log.e(TAG, "backup requested via broadcast intent");
+            Log.d(TAG, "backup requested via broadcast intent");
             new BackupJobs(context).scheduleImmediate();
         } else {
-            Log.e(TAG, "backup requested via broadcast intent but ignored");
+            Log.d(TAG, "backup requested via broadcast intent but ignored");
         }
     }
 }

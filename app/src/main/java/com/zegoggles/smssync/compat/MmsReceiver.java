@@ -1,7 +1,5 @@
 package com.zegoggles.smssync.compat;
 
-import static com.zegoggles.smssync.App.TAG;
-
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;

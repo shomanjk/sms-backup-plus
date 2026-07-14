@@ -21,6 +21,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -66,6 +67,9 @@ public class App extends Application {
     private Preferences preferences;
     private BackupJobs backupJobs;
 
+    // Context.RECEIVER_EXPORTED, kept as a compat constant for compileSdk 29.
+    private static final int RECEIVER_EXPORTED_COMPAT = 0x2;
+
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     public void onCreate() {
@@ -73,27 +77,22 @@ public class App extends Application {
 
         setupStrictMode();
 
-        Log.e("[LOG] App.onCreate", "xxxxxxxxxxxxxxxx");
-
         SmsBroadcastReceiver smsBroadcastReceiver = new SmsBroadcastReceiver();
         IntentFilter intentFilter21 = new IntentFilter();
         intentFilter21.addAction(SmsBroadcastReceiver.SMS_RECEIVED);
         intentFilter21.setPriority(Integer.MAX_VALUE);
-        registerReceiver(smsBroadcastReceiver, intentFilter21);
+        registerExportedReceiver(smsBroadcastReceiver, intentFilter21);
 
         smsBroadcastReceiver = new SmsBroadcastReceiver();
         IntentFilter intentFilter22;
         intentFilter22 = IntentFilter.create(SmsBroadcastReceiver.MMS_RECEIVED, "application/vnd.wap.mms-message");
         intentFilter22.setPriority(Integer.MAX_VALUE);
-        registerReceiver(smsBroadcastReceiver, intentFilter22);
+        registerExportedReceiver(smsBroadcastReceiver, intentFilter22);
 
         BackupBroadcastReceiver backupBroadcastReceiver = new BackupBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter("com.zegoggles.smssync.BACKUP");
+        IntentFilter intentFilter = new IntentFilter(BackupBroadcastReceiver.BACKUP_ACTION);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        if (Build.VERSION.SDK_INT >= 26)
-            registerReceiver(backupBroadcastReceiver, intentFilter, RECEIVER_EXPORTED);
-        else
-            registerReceiver(backupBroadcastReceiver, intentFilter);
+        registerExportedReceiver(backupBroadcastReceiver, intentFilter);
 
         gcmAvailable = GooglePlayServices.isAvailable(this);
         preferences = new Preferences(this);
@@ -133,6 +132,14 @@ public class App extends Application {
         autoBackupSettingsChanged(null);
 
         register(this);
+    }
+
+    private void registerExportedReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiver, filter, RECEIVER_EXPORTED_COMPAT);
+        } else {
+            registerReceiver(receiver, filter);
+        }
     }
 
     @Subscribe public void autoBackupSettingsChanged(final AutoBackupSettingsChangedEvent event) {
@@ -225,14 +232,12 @@ public class App extends Application {
     }
 
     private void rescheduleJobs() {
-        Log.e("[LOG ] App.rescheduleJobs", "xxxxx");
         backupJobs.cancelAll();
 
         if (preferences.isAutoBackupEnabled()) {
             backupJobs.scheduleRegular();
 
             if (preferences.getIncomingTimeoutSecs() > 0 && !preferences.isUseOldScheduler()) {
-                Log.e("[LOG] App.rescheduleJobs", "incomming scheduler started");
                 backupJobs.scheduleContentTriggerJob();
             }
         }

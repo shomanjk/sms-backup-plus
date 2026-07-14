@@ -132,7 +132,8 @@
         <receiver android:name=".receiver.SmsBroadcastReceiver"
                   android:enabled="true"
                   android:permission="android.permission.BROADCAST_SMS"
-            tools:ignore="IntentFilterExportedReceiver">
+                  android:exported="true"
+                  tools:ignore="IntentFilterExportedReceiver">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
                 <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED"/>
@@ -156,12 +157,14 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.BackupBroadcastReceiver" android:enabled="true" tools:ignore="ExportedReceiver">
+        <!-- Runtime-registered in App.onCreate(); retained here as documentation.
+        <receiver android:name=".receiver.BackupBroadcastReceiver" android:enabled="true" android:exported="true" tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.zegoggles.smssync.BACKUP"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
+        -->
 
         <!-- BroadcastReceiver that listens for incoming SMS messages -->
         <receiver android:name=".compat.SmsReceiver"
