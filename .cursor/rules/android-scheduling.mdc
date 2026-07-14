@@ -1,0 +1,13 @@
+---
+description: Android/Java conventions for SMS Backup+ scheduling and receivers
+globs: app/src/main/**/*.{java,xml}
+alwaysApply: false
+---
+
+# Scheduling & receivers
+
+- Primary scheduling lives in `BackupJobs` + `SmsJobService` (+ `AlarmManagerDriver` fallback). Migration target is **WorkManager**, not more JobDispatcher.
+- Runtime registration for SMS/MMS/`com.zegoggles.smssync.BACKUP` is intentional (Android 8+); see `App.onCreate()` / `registerReceiver` with `RECEIVER_EXPORTED` on API 26+.
+- Prefer matching existing Java style (package `com.zegoggles.smssync`, Otto bus, preference keys in `Preferences`).
+- When touching manifests, keep `android:exported` explicit on components with intent filters.
+- Do not remove RCS/group addressing logic in mail conversion without review.

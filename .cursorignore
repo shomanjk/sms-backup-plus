@@ -1,0 +1,43 @@
+# Build and generated output
+**/build/
+.gradle/
+gen/
+classes/
+out/
+target/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Signing, secrets, and machine-local configuration
+local.properties
+keystore.properties
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+google-services.json
+secrets/
+.env
+.env.*
+!.env.example
+
+# Binary build artifacts
+*.apk
+*.aab
+*.ap_
+*.dex
+mapping.txt
+seeds.txt
+unused.txt
+
+# Personal notes and local Cursor data
+PRIVATE/
+notes.local.md
+*.local.md
+.cursor/mcp.json
+.cursor/plans/
+.cursor/agent-transcripts/
+plans/
+agent-transcripts/

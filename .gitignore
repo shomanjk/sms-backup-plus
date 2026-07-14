@@ -1,20 +1,65 @@
+# Editor / OS
 *.*~
-*.keystore
-gen
-classes
-local.properties
-keystore.properties
+*.swp
+*.DS_Store
+.rvmrc
+
+# IDE
+.idea/
 *.iml
 *.ipr
 *.iws
-*.swp
-.rvmrc
-.idea
-captures
-*.DS_Store
-target
-out
+.vscode/
+*.code-workspace
+
+# Android / Gradle local
+local.properties
+.gradle/
+**/build/
+captures/
+.externalNativeBuild/
+.cxx/
+gen/
+classes/
+out/
+target/
+
+# Signing & secrets — never commit
+*.keystore
+*.jks
+*.p12
+*.pem
+keystore.properties
+google-services.json
+*.key
+secrets/
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+*.apk
+*.aab
+*.ap_
+*.dex
+mapping.txt
+seeds.txt
+unused.txt
+
+# ProGuard local overrides
 proguard.cfg
 proguard-project.txt
-.gradle
-build
+
+# Cursor local / secrets (keep rules + AGENTS public)
+.cursor/mcp.json
+.cursor/*.log
+.cursor/plans/
+.cursor/agent-transcripts/
+
+# Personal notes that may contain device logs / tokens
+PRIVATE/
+notes.local.md
+*.local.md
+
+# Travis / CI local
+travis.local.yml
