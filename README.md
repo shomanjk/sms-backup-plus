@@ -1,7 +1,7 @@
 # SMS Backup+ <img src="https://raw.githubusercontent.com/jberkel/sms-backup-plus/master/metadata/play/assets/sms-backup.svg?sanitize=true" height="50px" alt="SMS Backup+ logo"/>
 
 > [!CAUTION]
-> **This is an unofficial experimental fork.** It is not affiliated with [jberkel](https://github.com/jberkel) or [henrichg](https://github.com/henrichg), and it is **not ready for daily use**. Automatic backup may still fail because the app currently relies on the deprecated Firebase JobDispatcher.
+> **This is an unofficial experimental fork.** It is not affiliated with [jberkel](https://github.com/jberkel) or [henrichg](https://github.com/henrichg), and it is **not ready for daily use**. Branch `phase-2-workmanager` replaces JobDispatcher with WorkManager; auto-backup still needs physical-device (RCS / OEM) verification before it is considered reliable.
 
 ## Fork lineage
 
@@ -16,8 +16,8 @@ This fork is **not available on the Google Play Store**. Build or install an APK
 
 ## Near-term roadmap
 
-1. Port henrichg's scheduler and receiver fixes.
-2. Replace Firebase JobDispatcher with WorkManager.
+1. ~~Port henrichg's scheduler and receiver fixes.~~
+2. ~~Replace Firebase JobDispatcher with WorkManager.~~ (on `phase-2-workmanager`; device RCS/OEM verify pending)
 3. Harden backup behavior for Android 14 and 15.
 
 See [ROADMAP.md](ROADMAP.md) for details.

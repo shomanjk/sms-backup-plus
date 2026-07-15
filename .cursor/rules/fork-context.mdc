@@ -12,12 +12,12 @@ This is **shomanjk/sms-backup-plus**, an unofficial experimental fork.
 - Remotes: `origin` = this fork, `upstream` = jberkel, `henrichg` = henrichg.
 - Version: `0.1.4` / `applicationId` `com.zegoggles.smssync` / `minSdk` 24 / `compileSdk` 36 / `targetSdk` 35.
 - Release notes: [CHANGELOG.md](CHANGELOG.md) (live); [CHANGES](CHANGES) is upstream archive only.
-- Auto backup is **not** reliably fixed yet: still on archived Firebase JobDispatcher (JitPack). **Phase 2 = WorkManager** ([ROADMAP.md](ROADMAP.md)).
+- Auto backup: WorkManager landed on branch `phase-2-workmanager` (see ROADMAP); do **not** claim daily-use reliability until physical RCS/OEM checks pass.
 - Read [AGENTS.md](AGENTS.md) for full agent guidance.
 
 ## Do
 
-- Prefer WorkManager migration and Android 14/15 hardening over new features.
+- Prefer Android 14/15 OEM/Doze hardening and device verification over new features.
 - Keep changes small; preserve jberkel RCS/threading behavior.
 - Keep experimental warnings accurate in README.
 - On user-visible releases or version bumps: update or **suggest** updating
@@ -27,6 +27,6 @@ This is **shomanjk/sms-backup-plus**, an unofficial experimental fork.
 ## Don't
 
 - Commit keystores, `keystore.properties`, `local.properties`, `.env`, APKs, or MCP secrets.
-- Claim henrichg ports fully fixed periodic auto-backup.
+- Claim auto-backup is fully fixed until ROADMAP Phase 2 device checks are done.
 - Change `applicationId` or merge speculative upstream PRs unless the user asks.
 - Edit the sibling henrichg-only clone (`../sms-backup-plus`) by mistake.

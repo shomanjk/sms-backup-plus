@@ -6,8 +6,8 @@ alwaysApply: false
 
 # Scheduling & receivers
 
-- Primary scheduling lives in `BackupJobs` + `SmsJobService` (+ `AlarmManagerDriver` fallback). Migration target is **WorkManager**, not more JobDispatcher.
-- Runtime registration for SMS/MMS/`com.zegoggles.smssync.BACKUP` is intentional (Android 8+); see `App.onCreate()` / `registerReceiver` with `RECEIVER_EXPORTED` on API 26+.
+- Primary scheduling lives in `BackupJobs` + `SmsBackupWorker` via **WorkManager** (unique OneTimeWork + ContentUriTrigger).
+- Runtime registration for SMS/MMS/`com.zegoggles.smssync.BACKUP` remains a secondary incoming path alongside content URI triggers; see `App.onCreate()` / `registerReceiver` with `RECEIVER_EXPORTED` on API 33+.
 - Prefer matching existing Java style (package `com.zegoggles.smssync`, Otto bus, preference keys in `Preferences`).
 - When touching manifests, keep `android:exported` explicit on components with intent filters.
 - Do not remove RCS/group addressing logic in mail conversion without review.

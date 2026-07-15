@@ -32,7 +32,7 @@ Guidance for AI agents and humans working in this repository.
    - `SmsBroadcastReceiver` / MMS registration from `App.onCreate()`
    - Incoming scheduler / related App + MainActivity wiring
 3. Documented experimental status in `README.md` and phases in `ROADMAP.md`.
-4. Temporary build bridge: archived Firebase JobDispatcher via JitPack (`googlearchive/firebase-jobdispatcher-android`) so `./gradlew assembleDebug` works until WorkManager.
+4. **WorkManager migration** (branch `phase-2-workmanager`): `SmsBackupWorker` + rewritten `BackupJobs`; removed JobDispatcher / `SmsJobService` / `AlarmManagerDriver`. ContentUriTrigger primary for incoming; SMS/MMS broadcasts kept as secondary. Port informed by [Mibou/sms-backup-plus](https://github.com/Mibou/sms-backup-plus) `fix/calendar-display-name-android15` (no package rename).
 5. Fork release notes live in `CHANGELOG.md` (Keep a Changelog); upstream history archived in `CHANGES`.
 
 ## Goal / roadmap
@@ -40,17 +40,16 @@ Guidance for AI agents and humans working in this repository.
 See [ROADMAP.md](ROADMAP.md). Priority order:
 
 1. ~~Port henrichg trigger/receiver fixes~~ (largely done; still verify on device)
-2. **Replace Firebase JobDispatcher with WorkManager** (real periodic auto-backup fix)
-3. Harden for Android 14/15 (FGS, exact alarms, receiver export rules, battery OEM quirks)
+2. ~~Replace Firebase JobDispatcher with WorkManager~~ (code done on `phase-2-workmanager`; **physical RCS/OEM verify before claiming auto-backup fixed**)
+3. Harden for Android 14/15 (remaining OEM / Doze / restricted-settings testing)
 
-Henrichg’s ports fixed **how backups get triggered** (broadcasts/receivers). They did **not** replace the dead JobDispatcher engine. Do not claim auto-backup is fixed until WorkManager ships.
+Do **not** claim auto-backup is fixed for daily use until physical-device verification in ROADMAP Phase 2 is checked off.
 
 ## Hot files
 
-- `app/src/main/java/com/zegoggles/smssync/App.java` — receiver registration, reschedule
-- `app/src/main/java/com/zegoggles/smssync/service/BackupJobs.java` — JobDispatcher scheduling (migration target)
-- `app/src/main/java/com/zegoggles/smssync/service/AlarmManagerDriver.java` — JobDispatcher driver fallback
-- `app/src/main/java/com/zegoggles/smssync/service/SmsJobService.java` — job execution entry
+- `app/src/main/java/com/zegoggles/smssync/App.java` — receiver registration, WorkManager `Configuration.Provider`, reschedule
+- `app/src/main/java/com/zegoggles/smssync/service/BackupJobs.java` — WorkManager scheduling
+- `app/src/main/java/com/zegoggles/smssync/service/SmsBackupWorker.java` — ListenableWorker entry
 - `app/src/main/java/com/zegoggles/smssync/receiver/BackupBroadcastReceiver.java`
 - `app/src/main/java/com/zegoggles/smssync/receiver/SmsBroadcastReceiver.java`
 - `app/src/main/AndroidManifest.xml`
@@ -71,7 +70,7 @@ suggest updating**:
 5. `versionName` / `versionCode` in `app/build.gradle` plus this file and
    `.cursor/rules/fork-context.mdc` when bumping
 
-Do **not** claim auto-backup is fixed in those dialogs until WorkManager ships.
+Do **not** claim auto-backup is fixed in those dialogs until physical-device Phase 2 checks pass.
 
 ## Agent constraints
 

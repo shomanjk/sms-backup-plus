@@ -16,10 +16,12 @@
 
 package com.zegoggles.smssync.activity;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.role.RoleManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony.Sms;
@@ -33,6 +35,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -118,6 +122,7 @@ public class MainActivity extends ThemeActivity implements
     private static final int REQUEST_PERMISSIONS_BACKUP_MANUAL = 4;
     private static final int REQUEST_PERMISSIONS_BACKUP_MANUAL_SKIP = 5;
     private static final int REQUEST_PERMISSIONS_BACKUP_SERVICE = 6;
+    private static final int REQUEST_PERMISSIONS_NOTIFICATIONS = 8;
 
     public static final String EXTRA_PERMISSIONS = "permissions";
     private static final String SCREEN_TITLE_RES = "titleRes";
@@ -162,6 +167,7 @@ public class MainActivity extends ThemeActivity implements
         if (versionDialog == Preferences.VersionDialogKind.NONE
                 && (getIntent() == null || !getIntent().hasExtra(EXTRA_PERMISSIONS))) {
             requestIncomingSmsPermissionsIfNeeded();
+            requestNotificationPermissionIfNeeded();
         }
     }
 
@@ -515,6 +521,21 @@ public class MainActivity extends ThemeActivity implements
         IncomingSmsPermissions.requestWithRationale(this);
     }
 
+    /** Progress notifications need runtime consent on Android 13+; denial does not block backup. */
+    void requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Log.v(TAG, "requesting POST_NOTIFICATIONS");
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                REQUEST_PERMISSIONS_NOTIFICATIONS);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -537,6 +558,9 @@ public class MainActivity extends ThemeActivity implements
                 } else {
                     post(new MissingPermissionsEvent(AppPermission.from(permissions, grantResults)));
                 }
+                break;
+            case REQUEST_PERMISSIONS_NOTIFICATIONS:
+                // Optional for backup; no status banner if denied.
                 break;
             case IncomingSmsPermissions.REQUEST_CODE:
                 // Empty arrays mean the request was interrupted (e.g. a second

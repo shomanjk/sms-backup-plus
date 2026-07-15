@@ -81,7 +81,6 @@ public class SmsBackupServiceTest {
         when(authPreferences.getStoreUri()).thenReturn("imap+ssl+://xoauth:foooo@imap.gmail.com:993");
         when(authPreferences.isLoginInformationSet()).thenReturn(true);
         when(preferences.getBackupContactGroup()).thenReturn(ContactGroup.EVERYBODY);
-        when(preferences.isUseOldScheduler()).thenReturn(true);
         when(preferences.getDataTypePreferences()).thenReturn(dataTypePreferences);
         when(dataTypePreferences.enabled()).thenReturn(EnumSet.of(DataType.SMS));
     }
@@ -106,9 +105,7 @@ public class SmsBackupServiceTest {
         assertThat(service.getState().exception).isInstanceOf(NoConnectionException.class);
     }
 
-    @Test public void shouldNotCheckForConnectivityBeforeBackingUpWithNewScheduler() throws Exception {
-        when(preferences.isUseOldScheduler()).thenReturn(false);
-
+    @Test public void shouldNotCheckForConnectivityForRegularWorkManagerBackup() throws Exception {
         Intent intent = new Intent(REGULAR.name());
         shadowConnectivityManager.setActiveNetworkInfo(null);
         shadowConnectivityManager.setBackgroundDataSetting(true);
@@ -172,6 +169,8 @@ public class SmsBackupServiceTest {
 
     @Test public void shouldScheduleNextRegularBackupAfterFinished() throws Exception {
         shadowConnectivityManager.setBackgroundDataSetting(true);
+        when(preferences.isAutoBackupEnabled()).thenReturn(true);
+        when(preferences.getRegularTimeoutSecs()).thenReturn(7200);
         Intent intent = new Intent(REGULAR.name());
         service.handleIntent(intent);
 

@@ -10,25 +10,29 @@ This experimental fork focuses first on making automatic backup dependable on cu
 
 ## Phase 2: Migrate to WorkManager
 
-This is the main automatic-backup fix. Replace Firebase JobDispatcher and its custom scheduling paths with AndroidX WorkManager, including periodic work, immediate/incoming-message work, network constraints, retries, persistence across reboot, and cancellation/rescheduling when preferences change.
-
-The migration is necessary because Firebase JobDispatcher is deprecated and unsupported. The [henrichg maintainer explicitly noted that the dependency is no longer available and migration to WorkManager is required](https://github.com/henrichg/sms-backup-plus/issues/2). Android also provides an official [Firebase JobDispatcher to WorkManager migration guide](https://developer.android.com/develop/background-work/background-tasks/persistent/migrate-from-legacy/firebase).
+**Implemented on branch `phase-2-workmanager`** (logic ported from Mibou’s WorkManager work, without package rename). JobDispatcher / `SmsJobService` / `AlarmManagerDriver` are gone; `SmsBackupWorker` + rewritten `BackupJobs` schedule unique one-time work, ContentUriTrigger incoming (with SMS/MMS broadcast as secondary), network constraints, and reschedule after REGULAR completion.
 
 Completion criteria:
 
-- No Firebase JobDispatcher dependency, manifest service, or compatibility driver remains.
-- Automatic backup survives process death and device reboot within Android background-execution limits.
-- Existing schedule, network, retry, and user-cancellation semantics are documented and tested.
+- [x] No Firebase JobDispatcher dependency, manifest service, or compatibility driver remains.
+- [x] Unit suite green (`BackupJobsTest`, `SmsBackupWorkerTest`, full `./gradlew test`).
+- [x] Emulator smoke: install/launch, WorkManager SystemJobService + ContentUri jobs present.
+- [ ] Physical-device confirmation: RCS/non-`SMS_RECEIVED` incoming, reboot, Doze / OEM battery limits.
+
+Do **not** claim auto-backup is fixed for daily use until the physical-device checks pass.
 
 ## Phase 3: Harden for Android 14 and 15
 
 `compileSdk` is **36** and `targetSdk` is **35**. Remaining work is runtime behavior and OEM testing, not raising those numbers again (except a later bump to **target 36** if/when Play or device testing warrants it).
 
-- Audit foreground-service, background-start, exact-alarm, broadcast-receiver, and notification requirements (POST_NOTIFICATIONS runtime prompt, exact-alarm UX, FGS types).
-- Validate runtime permissions and restricted-setting behavior on clean installs and upgrades.
+- [x] `POST_NOTIFICATIONS` runtime request (optional; non-blocking if denied).
+- [x] FGS `dataSync` + typed FGS permission (already present).
+- [x] Calendar `CALENDAR_DISPLAY_NAME` for Android 15+ list population.
+- Audit remaining exact-alarm UX (permission currently unused after WorkManager).
+- Validate restricted-settings / battery optimization on clean installs and upgrades.
 - Test battery optimization, Doze, reboot, connectivity changes, and long-running backups on Android 14 and 15.
 - Document known OEM limitations and any user action needed for reliable scheduling.
 
 ## Release readiness
 
-After all three phases, run upgrade and fresh-install tests, verify that IMAP backup state does not cause duplicate uploads, and publish clearly labeled experimental artifacts before considering a daily-use release.
+After Phase 2 device verification and Phase 3 hardening, run upgrade and fresh-install tests, verify that IMAP backup state does not cause duplicate uploads, and publish clearly labeled experimental artifacts before considering a daily-use release.

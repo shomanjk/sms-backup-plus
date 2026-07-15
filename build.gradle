@@ -14,14 +14,17 @@ allprojects {
         forkEvery = 100
         reports.html.required = false
         reports.junitXml.required = false
+        // Roboelectric 4.3 + JDK 17: ClassLoader.getPackage reflection
+        jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED',
+                '--add-opens=java.base/java.util=ALL-UNNAMED',
+                '--add-opens=java.base/java.io=ALL-UNNAMED'
     }
 
     repositories {
         google()
         mavenCentral()
         maven { url "https://jitpack.io" }
-        // Fallback hosting for leftover jobdispatcher artifacts until WorkManager migration
-        maven { url "https://maven.scijava.org/content/repositories/public/" }
     }
 }
 

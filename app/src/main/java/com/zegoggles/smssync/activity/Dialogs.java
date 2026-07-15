@@ -191,6 +191,7 @@ public class Dialogs {
             final Activity activity = getActivity();
             if (activity instanceof MainActivity) {
                 ((MainActivity) activity).requestIncomingSmsPermissionsIfNeeded();
+                ((MainActivity) activity).requestNotificationPermissionIfNeeded();
             }
         }
     }

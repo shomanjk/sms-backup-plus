@@ -12,7 +12,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.1.4] - 2026-07-14
+### Changed
+
+- Replaced Firebase JobDispatcher / AlarmManagerDriver with AndroidX WorkManager
+  (`SmsBackupWorker`, rewritten `BackupJobs`). Regular backups use unique
+  one-time work rescheduled after each run; incoming uses ContentUriTrigger
+  (primary) plus SMS/MMS broadcast receivers (secondary). ContentUriTrigger
+  watches `content://sms` and `content://mms` (RCS often writes to MMS).
+- Removed the “old scheduler” preference; WorkManager is the only scheduler.
+- Request `POST_NOTIFICATIONS` at launch on Android 13+ (optional for backup).
+- Calendar list uses `CALENDAR_DISPLAY_NAME` (Android 15+).
+- Unit tests: Robolectric 4.14.1 + WorkManager test helpers.
+
+### Emulator notes (API 36 AVD)
+
+- Debug APK installs and launches without JobDispatcher PendingIntent crashes.
+- WorkManager schedules SystemJobService jobs (including ContentUri triggers).
+- Physical-device RCS / Doze / OEM battery verification still required before
+  calling auto-backup reliable.
+
 
 `versionCode` 1806.
 
@@ -104,8 +122,10 @@ Play release `1.5.11`; tree was labeled `1.6.0-BETA2`). Ports functional Android
 
 ### Notes
 
-Still outstanding: WorkManager migration (Phase 2); fuller Android 14/15
-runtime hardening and device testing (Phase 3); `targetSdk` 36 when appropriate.
+Historical entry for the fork’s initial cut. Later [Unreleased] WorkManager
+work supersedes the JobDispatcher bridge. Remaining: physical RCS/OEM verify
+(Phase 2) and fuller Android 14/15 device testing (Phase 3).
+
 
 ## Older history
 

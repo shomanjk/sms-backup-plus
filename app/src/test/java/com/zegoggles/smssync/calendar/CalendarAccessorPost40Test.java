@@ -85,7 +85,7 @@ public class CalendarAccessorPost40Test {
         when(resolver.query(eq(CalendarContract.Calendars.CONTENT_URI), any(String[].class),
                 any(String.class),
                 any(String[].class),
-                eq(CalendarContract.Calendars.NAME + " ASC"))).thenReturn(
+                eq(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + " ASC"))).thenReturn(
             cursor
         );
 

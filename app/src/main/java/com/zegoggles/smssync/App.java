@@ -22,7 +22,6 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -34,10 +33,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.work.Configuration;
 
 import android.util.Log;
 import com.fsck.k9.mail.K9MailLib;
@@ -50,11 +51,7 @@ import com.zegoggles.smssync.receiver.BackupBroadcastReceiver;
 import com.zegoggles.smssync.receiver.SmsBroadcastReceiver;
 import com.zegoggles.smssync.service.BackupJobs;
 
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
-import static android.content.pm.PackageManager.DONT_KILL_APP;
-
-public class App extends Application {
+public class App extends Application implements Configuration.Provider {
     private static final boolean DEBUG = BuildConfig.DEBUG;
     public static final boolean LOCAL_LOGV = DEBUG;
     public static final String TAG = "SMSBackup+";
@@ -75,6 +72,8 @@ public class App extends Application {
 
         setupStrictMode();
 
+        // Keep SMS/MMS/BACKUP broadcasts as secondary incoming triggers alongside WorkManager
+        // ContentUriTrigger (primary path when auto-backup is enabled).
         SmsBroadcastReceiver smsBroadcastReceiver = new SmsBroadcastReceiver();
         IntentFilter intentFilter21 = new IntentFilter();
         intentFilter21.addAction(SmsBroadcastReceiver.SMS_RECEIVED);
@@ -100,22 +99,7 @@ public class App extends Application {
             createNotificationChannel();
         }
 
-        // Prefer AlarmManagerDriver before constructing BackupJobs. GooglePlayDriver
-        // (archived Firebase JobDispatcher) creates PendingIntents without mutability
-        // flags and crashes on API 31+ during App.onCreate.
-        if (!gcmAvailable) {
-            Log.v(TAG, "Google Play Services not available, forcing use of old scheduler");
-            preferences.setUseOldScheduler(true);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Log.v(TAG, "API 31+: forcing AlarmManager scheduler (JobDispatcher PendingIntent flags)");
-            preferences.setUseOldScheduler(true);
-        }
-
         backupJobs = new BackupJobs(this);
-
-        if (gcmAvailable && !preferences.isUseOldScheduler()) {
-            setBroadcastReceiversEnabled(false);
-        }
 
         K9MailLib.setDebugStatus(new K9MailLib.DebugStatus() {
             @Override
@@ -129,7 +113,7 @@ public class App extends Application {
             }
         });
 
-        if (gcmAvailable && DEBUG) {
+        if (DEBUG) {
             getContentResolver().registerContentObserver(Consts.SMS_PROVIDER, true, new LoggingContentObserver());
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
                 getContentResolver().registerContentObserver(Consts.CALLLOG_PROVIDER, true, new LoggingContentObserver());
@@ -138,6 +122,13 @@ public class App extends Application {
         autoBackupSettingsChanged(null);
 
         register(this);
+    }
+
+    @NonNull @Override
+    public Configuration getWorkManagerConfiguration() {
+        return new Configuration.Builder()
+            .setMinimumLoggingLevel(LOCAL_LOGV ? Log.VERBOSE : Log.INFO)
+            .build();
     }
 
     private void registerExportedReceiver(BroadcastReceiver receiver, IntentFilter filter) {
@@ -152,7 +143,6 @@ public class App extends Application {
         if (LOCAL_LOGV) {
             Log.v(TAG, "autoBackupSettingsChanged("+event+")");
         }
-        setBroadcastReceiversEnabled(preferences.isUseOldScheduler() && preferences.isAutoBackupEnabled());
         rescheduleJobs();
     }
 
@@ -219,31 +209,13 @@ public class App extends Application {
         NotificationManagerCompat.from(this).createNotificationChannel(channel);
     }
 
-    /** @noinspection unused*/
-    private void setBroadcastReceiversEnabled(boolean enabled) {
-        // enableOrDisableComponent(enabled, SmsBroadcastReceiver.class);
-        // enableOrDisableComponent(enabled, BootReceiver.class);
-    }
-
-    /** @noinspection unused*/
-    private void enableOrDisableComponent(boolean enabled, Class<?> component) {
-        if (LOCAL_LOGV) {
-            Log.v(TAG, "enableOrDisableComponent("+enabled+", "+component.getSimpleName()+")");
-        }
-        // NB: changes made via setComponentEnabledSetting are persisted across reboots
-        getPackageManager().setComponentEnabledSetting(
-            new ComponentName(this, component),
-            enabled ? COMPONENT_ENABLED_STATE_ENABLED : COMPONENT_ENABLED_STATE_DISABLED,
-            DONT_KILL_APP /* apply setting without restart */);
-    }
-
     private void rescheduleJobs() {
         backupJobs.cancelAll();
 
         if (preferences.isAutoBackupEnabled()) {
             backupJobs.scheduleRegular();
 
-            if (preferences.getIncomingTimeoutSecs() > 0 && !preferences.isUseOldScheduler()) {
+            if (preferences.getIncomingTimeoutSecs() > 0) {
                 backupJobs.scheduleContentTriggerJob();
             }
         }
