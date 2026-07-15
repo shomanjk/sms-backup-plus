@@ -36,6 +36,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Calendar picker under Call log settings stays disabled when no calendars are
+  loaded after enabling sync; request read+write calendar permission, refresh the
+  list after grant, and show a clear “no calendars found” summary.
 - Prompt for `READ_SMS` / `RECEIVE_SMS` / `RECEIVE_MMS` when automatic backup is
   enabled so incoming-message triggers can schedule backups (read-only SMS grant
   is not enough). Show an in-app explanation before the system dialog, avoid a

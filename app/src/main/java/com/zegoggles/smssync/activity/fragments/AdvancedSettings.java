@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.WRITE_CALENDAR;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -280,8 +281,19 @@ public abstract class AdvancedSettings extends SMSBackupPreferenceFragment {
                     @Override
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         if (newValue == Boolean.TRUE && needCalendarPermission()) {
-                            requestPermissions(new String[] {WRITE_CALENDAR}, REQUEST_CALENDAR_ACCESS);
+                            requestPermissions(new String[] {READ_CALENDAR, WRITE_CALENDAR},
+                                    REQUEST_CALENDAR_ACCESS);
                             return false;
+                        } else if (newValue == Boolean.TRUE) {
+                            // Ensure the calendar list is loaded when enabling after permission
+                            // was already granted (e.g. from system settings).
+                            handler.post(new Runnable() {
+                                @Override public void run() {
+                                    initCalendars();
+                                    updateCallLogCalendarLabelFromPref();
+                                }
+                            });
+                            return true;
                         } else {
                             return true;
                         }
@@ -295,12 +307,18 @@ public abstract class AdvancedSettings extends SMSBackupPreferenceFragment {
                 Log.v(TAG, "onRequestPermissionsResult("+requestCode+ ","+ Arrays.toString(permissions) +","+ Arrays.toString(grantResults));
 
                 if (requestCode == REQUEST_CALENDAR_ACCESS) {
-                    enabledPreference.setChecked(allGranted(grantResults));
+                    final boolean granted = allGranted(grantResults);
+                    enabledPreference.setChecked(granted);
+                    if (granted) {
+                        initCalendars();
+                        updateCallLogCalendarLabelFromPref();
+                    }
                 }
             }
 
             private boolean needCalendarPermission() {
-                return ContextCompat.checkSelfPermission(getContext(), WRITE_CALENDAR) != PERMISSION_GRANTED;
+                return ContextCompat.checkSelfPermission(getContext(), READ_CALENDAR) != PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(getContext(), WRITE_CALENDAR) != PERMISSION_GRANTED;
             }
 
             private void updateCallLogCalendarLabelFromPref() {
@@ -309,10 +327,24 @@ public abstract class AdvancedSettings extends SMSBackupPreferenceFragment {
             }
 
             private void initCalendars() {
-                if (needCalendarPermission()) return;
+                if (needCalendarPermission()) {
+                    calendarPreference.setEnabled(false);
+                    calendarPreference.setSummary(R.string.ui_backup_calllog_sync_calendar_desc);
+                    return;
+                }
 
                 CalendarAccessor calendars = CalendarAccessor.Get.instance(getContext().getContentResolver());
-                initListPreference(calendarPreference, calendars.getCalendars(), false);
+                Map<String, String> available = calendars.getCalendars();
+                Log.d(TAG, "initCalendars: found " + available.size() + " calendar(s)");
+                boolean hasCalendars = initListPreference(calendarPreference, available, false);
+                // initListPreference disables the row when empty; keep a clear reason visible.
+                // When calendars exist, leave enabled=true and let the checkbox dependency
+                // decide whether the row is interactive.
+                if (hasCalendars) {
+                    calendarPreference.setSummary(R.string.ui_backup_calllog_sync_calendar_desc);
+                } else {
+                    calendarPreference.setSummary(R.string.ui_backup_calllog_sync_calendar_empty);
+                }
             }
 
             private void registerValidCallLogFolderCheck() {
