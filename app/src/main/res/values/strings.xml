@@ -59,6 +59,12 @@
   </plurals>
 
   <string name="permission_read_sms">Access SMS Messages</string>
+  <string name="permission_receive_sms">Receive SMS (for auto-backup on new messages)</string>
+  <string name="permission_receive_mms">Receive MMS (for auto-backup on new messages)</string>
+  <string name="ui_dialog_incoming_sms_permission_title">SMS permission for automatic backup</string>
+  <string name="ui_dialog_incoming_sms_permission_msg">Automatic backup needs access to your SMS/MMS so it can read messages to upload and detect new ones when they arrive.\n\nThe next screen is the system permission prompt (Android often shows one SMS dialog for read and receive together).</string>
+  <string name="ui_dialog_incoming_sms_permission_settings_msg">SMS access was denied earlier, so Android will not show the permission prompt again.\n\nOpen app settings, allow SMS for SMS Backup+, then return here.</string>
+  <string name="ui_dialog_open_app_settings">Open settings</string>
   <string name="permission_read_call_log">Access Call Log</string>
   <string name="permission_read_contacts">Access contacts</string>
   <string name="permission_unknown">Unknown</string>
@@ -179,7 +185,7 @@
   <string name="ui_dialog_welcome_msg">This is an unofficial experimental fork of SMS Backup+. It is not affiliated with jberkel or henrichg, and it is not ready for daily use — automatic backup may still fail.\n\nThis build uses the same application ID as the Play Store and henrichg apps. Uninstall those first. If your messages are already backed up in IMAP, choose Skip on the first backup to avoid uploading them again.</string>
   <string name="ui_dialog_welcome_more_info">More info</string>
   <string name="ui_dialog_whats_new_title">What\'s new in %1$s</string>
-  <string name="ui_dialog_whats_new_msg">• IMAP: fix TLS SNI on modern Android, and prefer IPv4 so broken IPv6 paths do not stall backups.\n• Fixed the toolbar and Backup/Restore controls sitting under the status and navigation bars on Android 15.\n• Removed the broken in-app Donate option on this sideload fork.\n\nAutomatic backup is still experimental until WorkManager ships.</string>
+  <string name="ui_dialog_whats_new_msg">• When automatic backup is on, the app now asks for Receive SMS/MMS permission so new messages can trigger backups (read-only SMS is not enough).\n\nAutomatic backup is still experimental until WorkManager ships.</string>
   <string name="ui_dialog_whats_new_changelog">Changelog</string>
 
   <string name="ui_dialog_access_token_msg">Requesting access…</string>

@@ -19,6 +19,7 @@ import com.squareup.otto.Subscribe;
 import com.zegoggles.smssync.App;
 import com.zegoggles.smssync.R;
 import com.zegoggles.smssync.activity.events.MissingPermissionsEvent;
+import com.zegoggles.smssync.activity.events.PermissionsGrantedEvent;
 import com.zegoggles.smssync.activity.events.PerformAction;
 import com.zegoggles.smssync.preferences.AuthPreferences;
 import com.zegoggles.smssync.preferences.Preferences;
@@ -200,7 +201,14 @@ public class StatusPreference extends Preference implements View.OnClickListener
     }
 
     @Subscribe public void onMissingPermissions(MissingPermissionsEvent event) {
+        if (event.permissions == null || event.permissions.isEmpty()) {
+            return;
+        }
         displayMissingPermissions(event.permissions);
+    }
+
+    @Subscribe public void onPermissionsGranted(PermissionsGrantedEvent event) {
+        idle();
     }
 
     private void onBackup() {

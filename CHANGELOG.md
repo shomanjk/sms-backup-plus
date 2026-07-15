@@ -12,6 +12,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-07-14
+
+`versionCode` 1806.
+
+### Fixed
+
+- Prompt for `READ_SMS` / `RECEIVE_SMS` / `RECEIVE_MMS` when automatic backup is
+  enabled so incoming-message triggers can schedule backups (read-only SMS grant
+  is not enough). Show an in-app explanation before the system dialog, avoid a
+  bogus green “Permission problem” when a duplicate permission request is
+  cancelled by Android, and after Deny (when Android will not re-prompt) offer
+  Open settings instead of a silent no-op.
+
 ## [0.1.3] - 2026-07-14
 
 `versionCode` 1805.

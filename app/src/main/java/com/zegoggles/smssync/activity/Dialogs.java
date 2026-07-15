@@ -16,6 +16,7 @@
 package com.zegoggles.smssync.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -180,6 +181,17 @@ public class Dialogs {
                         }
                     })
                     .create();
+        }
+
+        @Override
+        public void onDismiss(@NonNull DialogInterface dialog) {
+            super.onDismiss(dialog);
+            // Defer SMS permission rationale until Welcome / What's new is closed
+            // so the system prompt is not shown without explanation underneath.
+            final Activity activity = getActivity();
+            if (activity instanceof MainActivity) {
+                ((MainActivity) activity).requestIncomingSmsPermissionsIfNeeded();
+            }
         }
     }
 

@@ -33,7 +33,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -51,6 +50,7 @@ import com.zegoggles.smssync.activity.events.AccountAddedEvent;
 import com.zegoggles.smssync.activity.events.AccountConnectionChangedEvent;
 import com.zegoggles.smssync.activity.events.FallbackAuthEvent;
 import com.zegoggles.smssync.activity.events.MissingPermissionsEvent;
+import com.zegoggles.smssync.activity.events.PermissionsGrantedEvent;
 import com.zegoggles.smssync.activity.events.PerformAction;
 import com.zegoggles.smssync.activity.events.PerformAction.Actions;
 import com.zegoggles.smssync.activity.events.ThemeChangedEvent;
@@ -144,7 +144,8 @@ public class MainActivity extends ThemeActivity implements
         if (bundle == null) {
             showFragment(new MainSettings(), null);
         }
-        switch (preferences.consumeVersionDialog()) {
+        final Preferences.VersionDialogKind versionDialog = preferences.consumeVersionDialog();
+        switch (versionDialog) {
             case FIRST_INSTALL:
                 showDialog(VERSION_NOTES, new BundleBuilder().putBoolean(FIRST_INSTALL, true).build());
                 break;
@@ -156,12 +157,28 @@ public class MainActivity extends ThemeActivity implements
         }
         checkDefaultSmsApp();
         requestPermissionsIfNeeded();
+        // After Welcome/What's new dismisses, VersionNotes asks again. Avoid racing
+        // the rationale under that dialog (or under a service permission request).
+        if (versionDialog == Preferences.VersionDialogKind.NONE
+                && (getIntent() == null || !getIntent().hasExtra(EXTRA_PERMISSIONS))) {
+            requestIncomingSmsPermissionsIfNeeded();
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         App.register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Returning from system Settings after manually granting SMS should
+        // clear a sticky “Permission problem” status from an earlier deny.
+        if (IncomingSmsPermissions.missing(this).length == 0) {
+            post(new PermissionsGrantedEvent());
+        }
     }
 
     @Override
@@ -279,10 +296,11 @@ public class MainActivity extends ThemeActivity implements
 
     @Subscribe public void backupStateChanged(final BackupState newState) {
         if ((newState.backupType == MANUAL || newState.backupType == SKIP) && newState.isPermissionException()) {
-            ActivityCompat.requestPermissions(this,
-                newState.getMissingPermissions(),
-                newState.backupType == SKIP ? REQUEST_PERMISSIONS_BACKUP_MANUAL_SKIP : REQUEST_PERMISSIONS_BACKUP_MANUAL
-            );
+            final int requestCode = newState.backupType == SKIP
+                    ? REQUEST_PERMISSIONS_BACKUP_MANUAL_SKIP
+                    : REQUEST_PERMISSIONS_BACKUP_MANUAL;
+            IncomingSmsPermissions.requestWithRationale(
+                    this, newState.getMissingPermissions(), requestCode);
         }
     }
 
@@ -476,9 +494,25 @@ public class MainActivity extends ThemeActivity implements
         final Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_PERMISSIONS)) {
             final String[] permissions = intent.getStringArrayExtra(EXTRA_PERMISSIONS);
-            Log.v(TAG, "requesting permissions "+ Arrays.toString(permissions));
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSIONS_BACKUP_SERVICE);
+            if (permissions == null || permissions.length == 0) {
+                return;
+            }
+            Log.v(TAG, "requesting permissions with rationale " + Arrays.toString(permissions));
+            IncomingSmsPermissions.requestWithRationale(
+                    this, permissions, REQUEST_PERMISSIONS_BACKUP_SERVICE);
         }
+    }
+
+    /** Called from startup and after Welcome/What's new dismisses. */
+    void requestIncomingSmsPermissionsIfNeeded() {
+        if (!preferences.isAutoBackupEnabled()) {
+            return;
+        }
+        if (IncomingSmsPermissions.missing(this).length == 0) {
+            return;
+        }
+        Log.i(TAG, "requesting incoming SMS permissions with rationale");
+        IncomingSmsPermissions.requestWithRationale(this);
     }
 
     @Override
@@ -499,8 +533,32 @@ public class MainActivity extends ThemeActivity implements
             case REQUEST_PERMISSIONS_BACKUP_SERVICE:
                 if (allGranted(grantResults)) {
                     startBackup(MANUAL);
+                    requestIncomingSmsPermissionsIfNeeded();
                 } else {
                     post(new MissingPermissionsEvent(AppPermission.from(permissions, grantResults)));
+                }
+                break;
+            case IncomingSmsPermissions.REQUEST_CODE:
+                // Empty arrays mean the request was interrupted (e.g. a second
+                // requestPermissions call) — ignore, do not show a bogus status.
+                if (permissions.length == 0 || grantResults.length == 0) {
+                    Log.w(TAG, "incoming SMS permission result cancelled/interrupted");
+                    break;
+                }
+                IncomingSmsPermissions.markSmsPermissionsRequested(this);
+                if (allGranted(grantResults)) {
+                    post(new PermissionsGrantedEvent());
+                } else {
+                    final List<AppPermission> missing = AppPermission.from(permissions, grantResults);
+                    Log.w(TAG, "incoming SMS permissions not granted: " + missing);
+                    post(new MissingPermissionsEvent(missing));
+                    // Deny / “Don’t ask again”: system may not show a dialog next
+                    // time — offer app settings immediately.
+                    final String[] stillMissing = IncomingSmsPermissions.missing(this);
+                    if (stillMissing.length > 0
+                            && !IncomingSmsPermissions.canShowSystemPrompt(this, stillMissing)) {
+                        IncomingSmsPermissions.requestWithRationale(this);
+                    }
                 }
                 break;
          }

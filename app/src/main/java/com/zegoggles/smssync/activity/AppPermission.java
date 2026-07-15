@@ -15,6 +15,8 @@ import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 public enum AppPermission {
     READ_SMS(Manifest.permission.READ_SMS, R.string.permission_read_sms),
+    RECEIVE_SMS(Manifest.permission.RECEIVE_SMS, R.string.permission_receive_sms),
+    RECEIVE_MMS(Manifest.permission.RECEIVE_MMS, R.string.permission_receive_mms),
     READ_CALL_LOG(Manifest.permission.READ_CALL_LOG, R.string.permission_read_call_log),
     READ_CONTACTS(Manifest.permission.READ_CONTACTS, R.string.permission_read_contacts),
     UNKNOWN(null, R.string.permission_unknown);
@@ -86,6 +88,9 @@ public enum AppPermission {
         List<String> permissions = new ArrayList<String>();
         for (AppPermission permission : appPermissions) {
             permissions.add(resources.getString(permission.descriptionResource));
+        }
+        if (permissions.isEmpty()) {
+            return resources.getString(R.string.status_permission_problem);
         }
         return resources.getQuantityString(R.plurals.status_permission_problem_details,
                 permissions.size(),

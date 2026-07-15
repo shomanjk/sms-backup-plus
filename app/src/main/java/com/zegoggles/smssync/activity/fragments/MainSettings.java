@@ -2,7 +2,9 @@ package com.zegoggles.smssync.activity.fragments;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -10,6 +12,7 @@ import androidx.preference.Preference;
 import com.squareup.otto.Subscribe;
 import com.zegoggles.smssync.App;
 import com.zegoggles.smssync.R;
+import com.zegoggles.smssync.activity.IncomingSmsPermissions;
 import com.zegoggles.smssync.activity.events.AccountAddedEvent;
 import com.zegoggles.smssync.activity.events.AccountRemovedEvent;
 import com.zegoggles.smssync.activity.events.AutoBackupSettingsChangedEvent;
@@ -20,6 +23,7 @@ import com.zegoggles.smssync.preferences.AuthPreferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.zegoggles.smssync.App.TAG;
 import static com.zegoggles.smssync.preferences.Preferences.Keys.BACKUP_SETTINGS_SCREEN;
 import static com.zegoggles.smssync.preferences.Preferences.Keys.ENABLE_AUTO_BACKUP;
 import static com.zegoggles.smssync.preferences.Preferences.Keys.INCOMING_TIMEOUT_SECONDS;
@@ -62,7 +66,37 @@ public class MainSettings extends SMSBackupPreferenceFragment {
         super.onResume();
 
         updateAutoBackupPreferences();
-        addPreferenceListener(ENABLE_AUTO_BACKUP.key);
+        // Request RECEIVE_* from this fragment when the checkbox turns on so the
+        // prompt is not dependant on Otto delivery / SharedPreferences timing.
+        Preference autoBackup = findPreference(ENABLE_AUTO_BACKUP.key);
+        autoBackup.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, final Object newValue) {
+                final boolean enabled = Boolean.TRUE.equals(newValue);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        App.post(new AutoBackupSettingsChangedEvent());
+                        if (enabled) {
+                            requestIncomingSmsPermissionsFromUi();
+                        }
+                    }
+                });
+                return true;
+            }
+        });
+    }
+
+    private void requestIncomingSmsPermissionsFromUi() {
+        final FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        if (IncomingSmsPermissions.missing(activity).length == 0) {
+            return;
+        }
+        Log.i(TAG, "requesting incoming SMS permissions from settings (with rationale)");
+        IncomingSmsPermissions.requestWithRationale(activity);
     }
 
     @Subscribe public void onAccountAdded(AccountAddedEvent event) {

@@ -13,7 +13,7 @@ import com.zegoggles.smssync.preferences.Preferences;
 
 public abstract class SMSBackupPreferenceFragment extends PreferenceFragmentCompat {
     protected Preferences preferences;
-    private Handler handler;
+    protected Handler handler;
 
     @Override
     public void onCreatePreferences(Bundle bundle, String rootKey) {
