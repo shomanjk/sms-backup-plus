@@ -14,6 +14,11 @@ allprojects {
         forkEvery = 100
         reports.html.required = false
         reports.junitXml.required = false
+        // Robolectric + JDK 17: ClassLoader.getPackage reflection
+        jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED',
+                '--add-opens=java.base/java.util=ALL-UNNAMED',
+                '--add-opens=java.base/java.io=ALL-UNNAMED'
     }
 
     repositories {
