@@ -16,6 +16,7 @@ package com.zegoggles.smssync.service;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -38,6 +39,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 
 import java.util.Collections;
@@ -93,6 +95,7 @@ public class SmsBackupWorkerTest {
         App.register(listener);
         try {
             worker.onStopped();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
         } finally {
             App.unregister(listener);
         }

@@ -58,10 +58,42 @@ public class BackupJobsTest {
         assertScheduled(BackupType.INCOMING.name());
     }
 
+    @Test public void shouldKeepExistingIncomingWhenRescheduled() throws Exception {
+        when(preferences.isAutoBackupEnabled()).thenReturn(true);
+        when(preferences.getIncomingTimeoutSecs()).thenReturn(2000);
+        subject.scheduleIncoming();
+        final List<WorkInfo> first = workManager.getWorkInfosForUniqueWork(BackupType.INCOMING.name()).get();
+        assertThat(first).hasSize(1);
+        final java.util.UUID firstId = first.get(0).getId();
+
+        // A second schedule (e.g. another SMS while backup is pending/running) must not
+        // REPLACE/cancel the existing unique work.
+        subject.scheduleIncoming();
+        final List<WorkInfo> second = workManager.getWorkInfosForUniqueWork(BackupType.INCOMING.name()).get();
+        assertThat(second).hasSize(1);
+        assertThat(second.get(0).getId()).isEqualTo(firstId);
+        assertThat(second.get(0).getState()).isNotEqualTo(WorkInfo.State.CANCELLED);
+    }
+
     @Test @Config(sdk = Build.VERSION_CODES.N)
     public void shouldScheduleContentTriggerJob() throws Exception {
         subject.scheduleContentTriggerJob();
         assertScheduled(BackupJobs.CONTENT_TRIGGER_TAG);
+        final List<WorkInfo> infos =
+            workManager.getWorkInfosForUniqueWork(BackupJobs.CONTENT_TRIGGER_TAG).get();
+        assertThat(infos.get(0).getConstraints().getRequiredNetworkType())
+            .isEqualTo(androidx.work.NetworkType.NOT_REQUIRED);
+    }
+
+    @Test public void shouldScheduleIncomingWithoutNetworkConstraint() throws Exception {
+        when(preferences.isAutoBackupEnabled()).thenReturn(true);
+        when(preferences.getIncomingTimeoutSecs()).thenReturn(60);
+        subject.scheduleIncoming();
+        final List<WorkInfo> infos =
+            workManager.getWorkInfosForUniqueWork(BackupType.INCOMING.name()).get();
+        assertThat(infos).hasSize(1);
+        assertThat(infos.get(0).getConstraints().getRequiredNetworkType())
+            .isEqualTo(androidx.work.NetworkType.NOT_REQUIRED);
     }
 
     @Test public void shouldScheduleRegularJobAfterBoot() throws Exception {

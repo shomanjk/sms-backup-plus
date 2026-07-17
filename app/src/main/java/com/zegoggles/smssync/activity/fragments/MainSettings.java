@@ -53,12 +53,12 @@ public class MainSettings extends SMSBackupPreferenceFragment {
     public void onStart() {
         super.onStart();
         App.register(this);
-
     }
+
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
         App.unregister(this);
+        super.onStop();
     }
 
     @Override

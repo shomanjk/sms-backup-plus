@@ -26,7 +26,6 @@ import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
-import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -145,7 +144,15 @@ public class BackupJobs {
     }
 
     private void enqueue(String uniqueName, OneTimeWorkRequest request) {
-        workManager().enqueueUniqueWork(uniqueName, ExistingWorkPolicy.REPLACE, request);
+        // INCOMING must use KEEP: REPLACE cancels an in-progress backup whenever another
+        // SMS/MMS arrives (broadcast or ContentUriTrigger re-arm), so large backlogs never
+        // finish. KEEP ignores the new request while work is enqueued/running; once it
+        // finishes, the next message schedules a fresh delay. REGULAR and contentTrigger
+        // still REPLACE so timers / one-shot URI observers can be re-armed.
+        final ExistingWorkPolicy policy = INCOMING.name().equals(uniqueName)
+                ? ExistingWorkPolicy.KEEP
+                : ExistingWorkPolicy.REPLACE;
+        workManager().enqueueUniqueWork(uniqueName, policy, request);
     }
 
     private @NonNull OneTimeWorkRequest createRequest(int inSeconds, BackupType backupType) {
@@ -162,20 +169,20 @@ public class BackupJobs {
     }
 
     private Constraints jobConstraints(BackupType backupType) {
-        if (backupType == BROADCAST_INTENT) {
-            return Constraints.NONE;
-        }
-        return new Constraints.Builder()
-            .setRequiredNetworkType(networkType())
-            .build();
+        // Do not attach JobScheduler/WorkManager network constraints. On Samsung (and
+        // some Android 14/15 builds) CONNECTIVITY stays unsatisfied for background UIDs
+        // even on Wi‑Fi, and "Force batch connectivity jobs" defers network work for
+        // minutes/hours — so incoming triggers queue but never run until the app is
+        // opened. Connectivity / wifi-only is enforced in SmsBackupService instead.
+        return Constraints.NONE;
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private Constraints contentTriggerConstraints() {
         // Watch both SMS and MMS: RCS (Google Messages et al.) often lands in
         // content://mms and would never wake a SMS-only ContentUriTrigger.
+        // No network constraint: this job only re-arms and calls scheduleIncoming().
         final Constraints.Builder builder = new Constraints.Builder()
-            .setRequiredNetworkType(networkType())
             .addContentUriTrigger(SMS_PROVIDER, true)
             .addContentUriTrigger(MMS_PROVIDER, true);
 
@@ -184,9 +191,5 @@ public class BackupJobs {
             builder.addContentUriTrigger(CALLLOG_PROVIDER, true);
         }
         return builder.build();
-    }
-
-    private NetworkType networkType() {
-        return preferences.isWifiOnly() ? NetworkType.UNMETERED : NetworkType.CONNECTED;
     }
 }

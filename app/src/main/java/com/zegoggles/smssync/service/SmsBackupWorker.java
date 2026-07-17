@@ -16,6 +16,8 @@ package com.zegoggles.smssync.service;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -48,6 +50,7 @@ import static com.zegoggles.smssync.service.CancelEvent.Origin.SYSTEM;
 public class SmsBackupWorker extends ListenableWorker {
     @Nullable private CallbackToFutureAdapter.Completer<Result> completer;
     @Nullable private String backupType;
+    @Nullable private SmsBackupService backupService;
 
     public SmsBackupWorker(@NonNull Context context, @NonNull WorkerParameters workerParameters) {
         super(context, workerParameters);
@@ -69,6 +72,10 @@ public class SmsBackupWorker extends ListenableWorker {
                 getBackupJobs().scheduleIncoming();
                 complete(Result.success());
             } else if (shouldRun()) {
+                // Register the worker before handleIntent so synchronous FINISHED/ERROR
+                // transitions are not missed. SmsBackupService.onCreate still registers the
+                // service for AppLog + scheduleNextBackup; destroy is deferred in complete()
+                // so the service can handle this same bus event first.
                 App.register(this);
                 startBackup(backupType);
             } else {
@@ -87,6 +94,8 @@ public class SmsBackupWorker extends ListenableWorker {
     protected void startBackup(String backupType) {
         SmsBackupService service = new SmsBackupService();
         service.attachBaseContext(getApplicationContext());
+        service.onCreate();
+        backupService = service;
         service.handleIntent(new Intent(backupType));
     }
 
@@ -97,7 +106,12 @@ public class SmsBackupWorker extends ListenableWorker {
     @Override
     public void onStopped() {
         if (LOCAL_LOGV) Log.v(TAG, "onStopped()");
-        App.post(new CancelEvent(SYSTEM));
+        // WorkManager may call this off the main thread; Otto's default bus rejects that.
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override public void run() {
+                App.post(new CancelEvent(SYSTEM));
+            }
+        });
     }
 
     @Subscribe
@@ -118,6 +132,26 @@ public class SmsBackupWorker extends ListenableWorker {
             completer.set(result);
             completer = null;
         }
+        // Defer onDestroy until after the current Otto dispatch so SmsBackupService can
+        // still handle this FINISHED event (AppLog, scheduleNextBackup).
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override public void run() {
+                destroyBackupService();
+            }
+        });
+    }
+
+    private void destroyBackupService() {
+        if (backupService == null) {
+            return;
+        }
+        try {
+            // stopSelf() is a no-op when the service was never started by the system.
+            backupService.onDestroy();
+        } catch (RuntimeException e) {
+            Log.w(TAG, "error destroying SmsBackupService", e);
+        }
+        backupService = null;
     }
 
     private boolean shouldRun() {

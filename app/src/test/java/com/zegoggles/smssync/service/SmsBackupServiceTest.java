@@ -105,12 +105,14 @@ public class SmsBackupServiceTest {
         assertThat(service.getState().exception).isInstanceOf(NoConnectionException.class);
     }
 
-    @Test public void shouldNotCheckForConnectivityForRegularWorkManagerBackup() throws Exception {
+    @Test public void shouldCheckForConnectivityForRegularWorkManagerBackup() throws Exception {
         Intent intent = new Intent(REGULAR.name());
         shadowConnectivityManager.setActiveNetworkInfo(null);
         shadowConnectivityManager.setBackgroundDataSetting(true);
         service.handleIntent(intent);
-        verify(backupTask).execute(any(BackupConfig.class));
+
+        verifyZeroInteractions(backupTask);
+        assertThat(service.getState().exception).isInstanceOf(NoConnectionException.class);
     }
 
     @Test public void shouldCheckForWifiConnectivity() throws Exception {

@@ -72,6 +72,7 @@ public class AppLog {
         sb.append(format(new Date()))
                 .append(" ").append(s);
         writer.println(sb);
+        writer.flush();
         if (LOCAL_LOGV) Log.v(TAG, "[AppLog]: " + sb);
     }
 

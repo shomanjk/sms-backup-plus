@@ -13,9 +13,8 @@
       <a href="https://github.com/jberkel">jberkel</a> or
       <a href="https://github.com/henrichg">henrichg</a>.
       <strong>Not ready for daily use</strong> — WorkManager has replaced
-      JobDispatcher on the <code>phase-2-workmanager</code> branch; confirm
-      auto-backup on your phone (especially RCS / OEM battery limits) before
-      relying on it.</p>
+      JobDispatcher; confirm auto-backup on your phone (especially RCS /
+      OEM battery limits) before relying on it.</p>
 
     <p>
       <small>Upstream author:
@@ -30,6 +29,10 @@
 
     <h3>New in this release:</h3>
     <ul class="news">
+      <li>0.2.0 — WorkManager replaces JobDispatcher. Incoming ContentUriTrigger
+        watches SMS and MMS; OEM network-constraint workaround so background
+        jobs are not stuck waiting on false CONNECTIVITY. Sync log and regular
+        reschedule fixed for WorkManager runs.</li>
       <li>0.1.4 — Prompt for Receive SMS/MMS when automatic backup is enabled so
         incoming messages can trigger backups.</li>
       <li>0.1.3 — Faster/more reliable IMAP to Gmail-style hosts (TLS SNI without

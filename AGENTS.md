@@ -19,7 +19,7 @@ Guidance for AI agents and humans working in this repository.
 **Current app identity**
 
 - `applicationId`: `com.zegoggles.smssync` (same as Play / henrichg — sideload requires uninstall; signatures differ)
-- `versionName`: `0.1.4` / `versionCode`: `1806` (fork SemVer; independent of upstream)
+- `versionName`: `0.2.0` / `versionCode`: `1807` (fork SemVer; independent of upstream)
 - `minSdkVersion`: `24` (Android 7+)
 - `compileSdk`: `36` / `targetSdkVersion`: `35`
 

@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-17
+
+`versionCode` 1807.
+
 ### Changed
 
 - Replaced Firebase JobDispatcher / AlarmManagerDriver with AndroidX WorkManager
@@ -24,13 +28,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Calendar list uses `CALENDAR_DISPLAY_NAME` (Android 15+).
 - Unit tests: Robolectric 4.14.1 + WorkManager test helpers.
 
-### Emulator notes (API 36 AVD)
+### Fixed
 
-- Debug APK installs and launches without JobDispatcher PendingIntent crashes.
-- WorkManager schedules SystemJobService jobs (including ContentUri triggers).
+- WorkManager backups now call `SmsBackupService.onCreate()` /
+  `onDestroy()`, so the on-device sync log (`sms_backup_plus.log`) is written
+  again and regular backups re-schedule after each run.
+- Stop Otto `Object already registered` when leaving preference screens:
+  `MainSettings` unregisters in `onStop` (not `onDestroy`).
+- Flush sync-log writes so entries survive if the process is killed mid-backup.
+- Drop WorkManager/JobScheduler network constraints for backup + ContentUriTrigger
+  jobs (Samsung often leaves CONNECTIVITY unsatisfied in the background / batches
+  network jobs). Enforce wifi/connectivity in-process in `SmsBackupService` instead.
+- Incoming auto-backup no longer cancels itself when another SMS/MMS arrives
+  mid-run (`ExistingWorkPolicy.KEEP` for INCOMING). Also post WorkManager
+  `onStopped` cancel events on the main thread (Otto bus).
+
+### Notes
+
 - Physical-device RCS / Doze / OEM battery verification still required before
-  calling auto-backup reliable.
+  calling auto-backup reliable for daily use.
 
+## [0.1.4] - 2026-07-15
 
 `versionCode` 1806.
 
@@ -125,8 +143,8 @@ Play release `1.5.11`; tree was labeled `1.6.0-BETA2`). Ports functional Android
 
 ### Notes
 
-Historical entry for the fork’s initial cut. Later [Unreleased] WorkManager
-work supersedes the JobDispatcher bridge. Remaining: physical RCS/OEM verify
+Historical entry for the fork’s initial cut. Later 0.2.0 WorkManager work
+supersedes the JobDispatcher bridge. Remaining: physical RCS/OEM verify
 (Phase 2) and fuller Android 14/15 device testing (Phase 3).
 
 

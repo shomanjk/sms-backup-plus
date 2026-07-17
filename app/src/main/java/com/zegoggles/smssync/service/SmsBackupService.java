@@ -50,7 +50,6 @@ import static com.zegoggles.smssync.App.CHANNEL_ID;
 import static com.zegoggles.smssync.App.LOCAL_LOGV;
 import static com.zegoggles.smssync.App.TAG;
 import static com.zegoggles.smssync.activity.AppPermission.formatMissingPermissionDetails;
-import static com.zegoggles.smssync.service.BackupType.INCOMING;
 import static com.zegoggles.smssync.service.BackupType.MANUAL;
 import static com.zegoggles.smssync.service.BackupType.REGULAR;
 import static com.zegoggles.smssync.service.BackupType.SKIP;
@@ -114,11 +113,10 @@ public class SmsBackupService extends ServiceBase {
             checkPermissions(enabledTypes);
             if (backupType != SKIP) {
                 checkCredentials();
-                // REGULAR and INCOMING rely on WorkManager network constraints;
-                // manual / broadcast backups still need an in-process connectivity check.
-                if (requiresManualConnectivityCheck(backupType)) {
-                    legacyCheckConnectivity();
-                }
+                // Always check connectivity in-process. WorkManager jobs intentionally
+                // omit network constraints (OEM JobScheduler CONNECTIVITY false-negatives /
+                // connectivity-job batching); wifi-only is enforced here.
+                legacyCheckConnectivity();
             }
             appLog(R.string.app_log_start_backup, backupType);
             getBackupTask().execute(getBackupConfig(backupType, enabledTypes, getBackupImapStore()));
@@ -286,15 +284,6 @@ public class SmsBackupService extends ServiceBase {
         } else {
             appLog(R.string.app_log_no_next_sync);
         }
-    }
-
-    /**
-     * REGULAR and INCOMING backups are scheduled through WorkManager, which enforces the
-     * network/wifi constraints itself. Other backups (manual, 3rd-party broadcast) bypass the
-     * scheduler and therefore still need a manual connectivity check.
-     */
-    private boolean requiresManualConnectivityCheck(BackupType backupType) {
-        return backupType != REGULAR && backupType != INCOMING;
     }
 
     void notifyUser(int notificationId, NotificationCompat.Builder builder) {
