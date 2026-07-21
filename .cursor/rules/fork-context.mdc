@@ -10,7 +10,7 @@ This is **shomanjk/sms-backup-plus**, an unofficial experimental fork.
 - Base: **jberkel/sms-backup-plus** `master` (includes RCS/group-thread fixes).
 - Ported: **henrichg** Android 7+ backup **trigger/receiver** fixes (BACKUP intent, exported receivers, runtime SMS registration, incoming scheduler).
 - Remotes: `origin` = this fork, `upstream` = jberkel, `henrichg` = henrichg.
-- Version: `0.2.0` / `applicationId` `com.zegoggles.smssync` / `minSdk` 24 / `compileSdk` 36 / `targetSdk` 35.
+- Version: `0.2.1` / `applicationId` `com.zegoggles.smssync` / `minSdk` 24 / `compileSdk` 36 / `targetSdk` 35.
 - Release notes: [CHANGELOG.md](CHANGELOG.md) (live); [CHANGES](CHANGES) is upstream archive only.
 - Auto backup: WorkManager landed on branch `phase-2-workmanager` (see ROADMAP); do **not** claim daily-use reliability until physical RCS/OEM checks pass.
 - Read [AGENTS.md](AGENTS.md) for full agent guidance.

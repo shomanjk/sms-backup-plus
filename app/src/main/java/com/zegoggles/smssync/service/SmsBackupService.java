@@ -272,6 +272,11 @@ public class SmsBackupService extends ServiceBase {
     }
 
     private void scheduleNextBackup(BackupState state) {
+        // Re-arm ContentUriTrigger + REGULAR if missing (e.g. after a cold start race).
+        // KEEP so we do not cancel an in-flight observer or reset an existing timer
+        // except when this was a REGULAR run (below).
+        getBackupJobs().ensureAutoBackupJobs();
+
         if (state.backupType != REGULAR) {
             return;
         }

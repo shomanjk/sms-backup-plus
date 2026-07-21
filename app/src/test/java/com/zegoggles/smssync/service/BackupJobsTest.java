@@ -115,10 +115,36 @@ public class BackupJobsTest {
         assertNotScheduled(BackupType.REGULAR.name());
     }
 
-    @Test public void shouldNotScheduleIncomingBackupIfAutoBackupIsDisabled() throws Exception {
+    @Test public void shouldEnsureAutoBackupJobsWithoutReplacingArmedContentTrigger() throws Exception {
+        when(preferences.isAutoBackupEnabled()).thenReturn(true);
+        when(preferences.getRegularTimeoutSecs()).thenReturn(7200);
+        when(preferences.getIncomingTimeoutSecs()).thenReturn(60);
+        subject.scheduleContentTriggerJob();
+        final List<WorkInfo> first =
+            workManager.getWorkInfosForUniqueWork(BackupJobs.CONTENT_TRIGGER_TAG).get();
+        assertThat(first).hasSize(1);
+        final java.util.UUID firstId = first.get(0).getId();
+
+        subject.ensureAutoBackupJobs();
+        final List<WorkInfo> second =
+            workManager.getWorkInfosForUniqueWork(BackupJobs.CONTENT_TRIGGER_TAG).get();
+        assertThat(second).hasSize(1);
+        assertThat(second.get(0).getId()).isEqualTo(firstId);
+        assertThat(second.get(0).getState()).isEqualTo(WorkInfo.State.ENQUEUED);
+        assertScheduled(BackupType.REGULAR.name());
+    }
+
+    @Test public void shouldCancelWhenEnsuringWhileAutoBackupDisabled() throws Exception {
+        when(preferences.isAutoBackupEnabled()).thenReturn(true);
+        when(preferences.getRegularTimeoutSecs()).thenReturn(7200);
+        when(preferences.getIncomingTimeoutSecs()).thenReturn(60);
+        subject.ensureAutoBackupJobs();
+        assertScheduled(BackupType.REGULAR.name());
+
         when(preferences.isAutoBackupEnabled()).thenReturn(false);
-        subject.scheduleIncoming();
-        assertNotScheduled(BackupType.INCOMING.name());
+        subject.ensureAutoBackupJobs();
+        assertNotScheduled(BackupType.REGULAR.name());
+        assertNotScheduled(BackupJobs.CONTENT_TRIGGER_TAG);
     }
 
     private void assertScheduled(String uniqueName) throws Exception {

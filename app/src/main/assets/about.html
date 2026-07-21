@@ -29,6 +29,8 @@
 
     <h3>New in this release:</h3>
     <ul class="news">
+      <li>0.2.1 — Fix stalled auto-backup: process start no longer cancels the
+        ContentUriTrigger / regular safety-net jobs that should stay armed.</li>
       <li>0.2.0 — WorkManager replaces JobDispatcher. Incoming ContentUriTrigger
         watches SMS and MMS; OEM network-constraint workaround so background
         jobs are not stuck waiting on false CONNECTIVITY. Sync log and regular

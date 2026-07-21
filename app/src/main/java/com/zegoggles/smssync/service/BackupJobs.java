@@ -94,6 +94,27 @@ public class BackupJobs {
     }
 
     public void scheduleContentTriggerJob() {
+        scheduleContentTriggerJob(ExistingWorkPolicy.REPLACE);
+    }
+
+    /**
+     * Ensure regular + ContentUriTrigger work exist without cancelling armed observers.
+     * Used on process start and after backups finish so a cold start cannot wipe a
+     * waiting ContentUriTrigger (which drops the SMS/MMS change that woke the app).
+     */
+    public void ensureAutoBackupJobs() {
+        if (!preferences.isAutoBackupEnabled()) {
+            Log.d(TAG, "auto backup disabled, canceling scheduled jobs");
+            cancelAll();
+            return;
+        }
+        schedule(preferences.getRegularTimeoutSecs(), REGULAR, false, ExistingWorkPolicy.KEEP);
+        if (preferences.getIncomingTimeoutSecs() > 0) {
+            scheduleContentTriggerJob(ExistingWorkPolicy.KEEP);
+        }
+    }
+
+    private void scheduleContentTriggerJob(ExistingWorkPolicy policy) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             if (LOCAL_LOGV) Log.v(TAG, "content uri triggers not supported on this platform");
             return;
@@ -106,7 +127,7 @@ public class BackupJobs {
                 .putBoolean(DATA_CONTENT_TRIGGER, true)
                 .build())
             .build();
-        enqueue(CONTENT_TRIGGER_TAG, request);
+        enqueue(CONTENT_TRIGGER_TAG, request, policy);
     }
 
     public void cancelAll() {
@@ -128,12 +149,17 @@ public class BackupJobs {
     }
 
     private void schedule(int inSeconds, BackupType backupType, boolean force) {
+        schedule(inSeconds, backupType, force, existingWorkPolicy(backupType.name()));
+    }
+
+    private void schedule(int inSeconds, BackupType backupType, boolean force,
+                          ExistingWorkPolicy policy) {
         if (LOCAL_LOGV) {
             Log.v(TAG, "scheduleBackup(" + inSeconds + ", " + backupType + ", " + force + ")");
         }
 
         if (force || (preferences.isAutoBackupEnabled() && inSeconds > 0)) {
-            enqueue(backupType.name(), createRequest(inSeconds, backupType));
+            enqueue(backupType.name(), createRequest(inSeconds, backupType), policy);
             if (LOCAL_LOGV) {
                 Log.v(TAG, "Scheduled backup job " + backupType + " due " +
                         (inSeconds > 0 ? "in " + inSeconds + " seconds" : "now"));
@@ -144,15 +170,24 @@ public class BackupJobs {
     }
 
     private void enqueue(String uniqueName, OneTimeWorkRequest request) {
+        enqueue(uniqueName, request, existingWorkPolicy(uniqueName));
+    }
+
+    private void enqueue(String uniqueName, OneTimeWorkRequest request,
+                         ExistingWorkPolicy policy) {
         // INCOMING must use KEEP: REPLACE cancels an in-progress backup whenever another
         // SMS/MMS arrives (broadcast or ContentUriTrigger re-arm), so large backlogs never
         // finish. KEEP ignores the new request while work is enqueued/running; once it
         // finishes, the next message schedules a fresh delay. REGULAR and contentTrigger
-        // still REPLACE so timers / one-shot URI observers can be re-armed.
-        final ExistingWorkPolicy policy = INCOMING.name().equals(uniqueName)
+        // still REPLACE by default so timers / one-shot URI observers can be re-armed;
+        // ensureAutoBackupJobs() uses KEEP so process start does not wipe an armed observer.
+        workManager().enqueueUniqueWork(uniqueName, policy, request);
+    }
+
+    private static ExistingWorkPolicy existingWorkPolicy(String uniqueName) {
+        return INCOMING.name().equals(uniqueName)
                 ? ExistingWorkPolicy.KEEP
                 : ExistingWorkPolicy.REPLACE;
-        workManager().enqueueUniqueWork(uniqueName, policy, request);
     }
 
     private @NonNull OneTimeWorkRequest createRequest(int inSeconds, BackupType backupType) {

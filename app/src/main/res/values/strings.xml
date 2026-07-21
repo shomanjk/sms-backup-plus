@@ -186,7 +186,7 @@
   <string name="ui_dialog_welcome_msg">This is an unofficial experimental fork of SMS Backup+. It is not affiliated with jberkel or henrichg, and it is not ready for daily use — automatic backup may still fail.\n\nThis build uses the same application ID as the Play Store and henrichg apps. Uninstall those first. If your messages are already backed up in IMAP, choose Skip on the first backup to avoid uploading them again.</string>
   <string name="ui_dialog_welcome_more_info">More info</string>
   <string name="ui_dialog_whats_new_title">What\'s new in %1$s</string>
-  <string name="ui_dialog_whats_new_msg">• Automatic backup now uses WorkManager (JobDispatcher removed).\n• Incoming backups should fire ~1 minute after new SMS/MMS, including on Samsung where network constraints were blocking jobs.\n• Sync log and regular reschedule fixed for background runs.\n\nStill experimental — confirm on your device before daily use.</string>
+  <string name="ui_dialog_whats_new_msg">• Fix: opening/starting the app no longer cancels the incoming-message watcher, which could stall backups until you opened the UI.\n• WorkManager auto-backup (from 0.2.0) plus Samsung network-constraint workaround.\n\nStill experimental — confirm on your device before daily use.</string>
   <string name="ui_dialog_whats_new_changelog">Changelog</string>
 
   <string name="ui_dialog_access_token_msg">Requesting access…</string>

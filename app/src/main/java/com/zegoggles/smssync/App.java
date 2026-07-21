@@ -119,7 +119,10 @@ public class App extends Application implements Configuration.Provider {
                 getContentResolver().registerContentObserver(Consts.CALLLOG_PROVIDER, true, new LoggingContentObserver());
             }
         }
-        autoBackupSettingsChanged(null);
+        // Only ensure jobs exist — do not cancelAll(). Cold-starting for a ContentUriTrigger
+        // used to cancel the observer that just woke us, dropping the SMS/MMS change and
+        // sometimes leaving REGULAR cancelled with no safety-net backup.
+        backupJobs.ensureAutoBackupJobs();
 
         register(this);
     }
@@ -210,6 +213,8 @@ public class App extends Application implements Configuration.Provider {
     }
 
     private void rescheduleJobs() {
+        // Settings toggled: tear down and rebuild so disabled auto-backup cancels work and
+        // preference changes (intervals, call-log triggers) take effect immediately.
         backupJobs.cancelAll();
 
         if (preferences.isAutoBackupEnabled()) {

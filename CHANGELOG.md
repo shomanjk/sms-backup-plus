@@ -12,6 +12,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-07-20
+
+`versionCode` 1808.
+
+### Fixed
+
+- Do not `cancelAll()` WorkManager jobs on every process start. Cold-starting for
+  a ContentUriTrigger previously cancelled the observer that woke the app
+  (dropping the SMS/MMS change) and could leave the 2‑hour REGULAR safety net
+  cancelled, so backups stalled until the UI was opened. Process start now
+  *ensures* jobs with `ExistingWorkPolicy.KEEP`; full cancel/reschedule remains
+  for auto-backup settings changes. After each backup, re-ensure jobs are armed.
+
 ## [0.2.0] - 2026-07-17
 
 `versionCode` 1807.
