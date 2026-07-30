@@ -136,11 +136,15 @@ public abstract class ServiceBase extends Service {
 
     @SuppressWarnings("deprecation")
     private int getWifiLockType() {
-        // WIFI_MODE_FULL_LOW_LATENCY doesn't exist before API 29; on minSdk 24-28 devices
-        // acquireWifiLock() would reject an unrecognized mode. On API 29+, the platform
-        // already silently remaps WIFI_MODE_FULL_HIGH_PERF requests to
-        // WIFI_MODE_FULL_LOW_LATENCY internally, so this is a no-op behavior-wise there.
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        // WIFI_MODE_FULL_LOW_LATENCY doesn't exist before API 29 (acquireWifiLock() would
+        // reject the unrecognized mode on minSdk 24-28 devices), and on API 29-33 it's a
+        // genuinely distinct, stricter mode (only active with screen on + app foreground) --
+        // not an alias for HIGH_PERF, which stays active in the background there. Only at
+        // API 34+ does the platform start silently remapping HIGH_PERF requests to
+        // LOW_LATENCY, so that's the only range where requesting LOW_LATENCY explicitly is a
+        // no-op vs. the deprecated constant. Below that, keep HIGH_PERF so scheduled/background
+        // backups keep real wifi performance protection.
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
             ? WifiManager.WIFI_MODE_FULL_LOW_LATENCY
             : WifiManager.WIFI_MODE_FULL_HIGH_PERF;
     }
