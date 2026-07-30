@@ -12,6 +12,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-07-30
+
+`versionCode` 1809.
+
+### Fixed
+
+- Do not crash when a WorkManager-driven backup finishes or is canceled.
+  `SmsBackupWorker` constructs `SmsBackupService` outside the system lifecycle,
+  so `stopForeground()` / `stopSelf()` could throw `NullPointerException`
+  (`class name is null`) and kill the process after a successful run.
+
 ## [0.2.1] - 2026-07-20
 
 `versionCode` 1808.
