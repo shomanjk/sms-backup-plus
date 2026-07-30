@@ -13,7 +13,7 @@ allprojects {
         maxParallelForks = 4
         forkEvery = 100
         reports.html.required = false
-        reports.junitXml.required = false
+        reports.junitXml.required = true
         // Roboelectric 4.3 + JDK 17: ClassLoader.getPackage reflection
         jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED',
                 '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED',
