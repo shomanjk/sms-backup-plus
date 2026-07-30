@@ -134,11 +134,15 @@ public abstract class ServiceBase extends Service {
         return PowerManager.PARTIAL_WAKE_LOCK;
     }
 
+    @SuppressWarnings("deprecation")
     private int getWifiLockType() {
-        // The platform already silently remaps WIFI_MODE_FULL_HIGH_PERF requests to
-        // WIFI_MODE_FULL_LOW_LATENCY internally, so this is a no-op behavior-wise; it just
-        // avoids the deprecation warning. See WifiManager#WIFI_MODE_FULL_HIGH_PERF javadoc.
-        return WifiManager.WIFI_MODE_FULL_LOW_LATENCY;
+        // WIFI_MODE_FULL_LOW_LATENCY doesn't exist before API 29; on minSdk 24-28 devices
+        // acquireWifiLock() would reject an unrecognized mode. On API 29+, the platform
+        // already silently remaps WIFI_MODE_FULL_HIGH_PERF requests to
+        // WIFI_MODE_FULL_LOW_LATENCY internally, so this is a no-op behavior-wise there.
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            ? WifiManager.WIFI_MODE_FULL_LOW_LATENCY
+            : WifiManager.WIFI_MODE_FULL_HIGH_PERF;
     }
 
     protected synchronized void releaseLocks() {
