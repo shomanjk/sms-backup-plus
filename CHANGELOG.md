@@ -24,7 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `SMSBackupPreferenceFragment`.
 - Replace deprecated `Bundle.getParcelable(String)` / `getParcelableArray(String)` with the
   type-safe `BundleCompat` equivalents in `Dialogs` and `AccountManagerAuthActivity`.
-- Replace deprecated `android.R.string.yes` / `no` with local string resources.
+- Replace deprecated `android.R.string.yes` / `no` with the already-localized,
+  non-deprecated `android.R.string.ok` / `cancel` (avoids shipping an
+  untranslated confirmation dialog in non-English locales).
 - Bump CI actions (`actions/upload-artifact` to v7, `mikepenz/action-junit-report` to v6) to
   clear a Node 20 deprecation warning.
 

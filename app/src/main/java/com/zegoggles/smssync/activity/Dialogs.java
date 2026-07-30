@@ -323,12 +323,12 @@ public class Dialogs {
                     .setTitle(R.string.status_unknown_error)
                     .setIcon(ic_dialog_alert)
                     .setMessage(R.string.ui_dialog_account_manager_token_error)
-                    .setPositiveButton(R.string.yes, new OnClickListener() {
+                    .setPositiveButton(ok, new OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             App.post(new FallbackAuthEvent(false));
                         }
                     })
-                    .setNegativeButton(R.string.no, null)
+                    .setNegativeButton(cancel, null)
                     .create();
         }
     }
