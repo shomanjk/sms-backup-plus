@@ -1,5 +1,7 @@
 # SMS Backup+ <img src="https://raw.githubusercontent.com/jberkel/sms-backup-plus/master/metadata/play/assets/sms-backup.svg?sanitize=true" height="50px" alt="SMS Backup+ logo"/>
 
+[![CI](https://github.com/shomanjk/sms-backup-plus/actions/workflows/ci.yml/badge.svg)](https://github.com/shomanjk/sms-backup-plus/actions/workflows/ci.yml)
+
 > [!CAUTION]
 > **This is an unofficial experimental fork.** It is not affiliated with [jberkel](https://github.com/jberkel) or [henrichg](https://github.com/henrichg), and it is **not ready for daily use**. JobDispatcher has been replaced with WorkManager; auto-backup still needs physical-device (RCS / OEM) verification before it is considered reliable.
 
@@ -494,9 +496,6 @@ repository and submit a [pull request][About pull requests].
 ## License
 
 This application is released under the terms of the [Apache License, Version 2.0][].
-
-[Build Status]: http://travis-ci.com/jberkel/sms-backup-plus
-[Build Status SVG]: https://api.travis-ci.com/jberkel/sms-backup-plus.svg?branch=master
 
 [XOAuth2]: https://developers.google.com/gmail/imap/xoauth2-protocol
 [changed their API policy]: https://cloud.google.com/blog/products/g-suite/elevating-user-trust-in-our-api-ecosystems

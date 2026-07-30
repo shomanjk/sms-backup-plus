@@ -10,6 +10,10 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   build:
     name: Unit tests & assembleDebug
@@ -25,10 +29,28 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
 
       - name: Unit tests and debug assemble
         run: ./gradlew testDebugUnitTest assembleDebug --stacktrace
+
+      - name: Upload unit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: app/build/test-results/testDebugUnitTest/**
+          if-no-files-found: ignore
+
+      - name: Publish unit test report
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: app/build/test-results/testDebugUnitTest/TEST-*.xml
+          check_name: Unit test results
+          require_tests: false
