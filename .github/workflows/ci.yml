@@ -12,6 +12,7 @@ concurrency:
 
 permissions:
   contents: read
+  actions: write
   checks: write
 
 jobs:
@@ -39,8 +40,13 @@ jobs:
       - name: Unit tests and debug assemble
         run: ./gradlew testDebugUnitTest assembleDebug --stacktrace
 
+      # Fork PRs get a read-only GITHUB_TOKEN; skip write-token steps there so the
+      # required "Unit tests & assembleDebug" check still passes when tests succeed.
       - name: Upload unit test results
-        if: always()
+        if: >-
+          always() &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository)
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-results
@@ -48,7 +54,10 @@ jobs:
           if-no-files-found: ignore
 
       - name: Publish unit test report
-        if: always()
+        if: >-
+          always() &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository)
         uses: mikepenz/action-junit-report@v5
         with:
           report_paths: app/build/test-results/testDebugUnitTest/TEST-*.xml
