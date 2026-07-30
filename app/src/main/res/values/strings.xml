@@ -186,7 +186,7 @@
   <string name="ui_dialog_welcome_msg">This is an unofficial experimental fork of SMS Backup+. It is not affiliated with jberkel or henrichg, and it is not ready for daily use — automatic backup may still fail.\n\nThis build uses the same application ID as the Play Store and henrichg apps. Uninstall those first. If your messages are already backed up in IMAP, choose Skip on the first backup to avoid uploading them again.</string>
   <string name="ui_dialog_welcome_more_info">More info</string>
   <string name="ui_dialog_whats_new_title">What\'s new in %1$s</string>
-  <string name="ui_dialog_whats_new_msg">• Fix: WorkManager backups no longer crash the app when they finish or are canceled.\n• 0.2.1: opening the app no longer cancels the incoming-message watcher.\n\nStill experimental — confirm on your device before daily use.</string>
+  <string name="ui_dialog_whats_new_msg">• 0.2.3: Internal cleanup — replaced deprecated Android APIs (no user-visible change).\n• 0.2.2: WorkManager backups no longer crash the app when they finish or are canceled.\n• 0.2.1: opening the app no longer cancels the incoming-message watcher.\n\nStill experimental — confirm on your device before daily use.</string>
   <string name="ui_dialog_whats_new_changelog">Changelog</string>
 
   <string name="ui_dialog_access_token_msg">Requesting access…</string>
@@ -347,4 +347,7 @@
   <string name="ui_dark_theme_label">Dark theme</string>
   <string name="legacy_settings">Legacy settings</string>
   <string name="legacy_settings_summary">XOAuth2 is no longer supported.</string>
+
+  <string name="yes">Yes</string>
+  <string name="no">No</string>
 </resources>

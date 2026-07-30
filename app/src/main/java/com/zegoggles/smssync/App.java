@@ -32,6 +32,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -237,7 +238,7 @@ public class App extends Application implements Configuration.Provider {
 
     private static class LoggingContentObserver extends ContentObserver {
         LoggingContentObserver() {
-            super(new Handler());
+            super(new Handler(Looper.getMainLooper()));
         }
         @Override public void onChange(boolean selfChange) {
             onChange(selfChange, null);

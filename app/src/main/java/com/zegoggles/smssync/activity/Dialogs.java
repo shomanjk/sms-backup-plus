@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -50,7 +51,6 @@ import static android.R.drawable.ic_dialog_alert;
 import static android.R.drawable.ic_dialog_info;
 import static android.R.string.cancel;
 import static android.R.string.ok;
-import static android.R.string.yes;
 import static android.content.DialogInterface.BUTTON_NEGATIVE;
 import static com.zegoggles.smssync.activity.MainActivity.REQUEST_WEB_AUTH;
 import static com.zegoggles.smssync.activity.events.PerformAction.Actions.Backup;
@@ -323,12 +323,12 @@ public class Dialogs {
                     .setTitle(R.string.status_unknown_error)
                     .setIcon(ic_dialog_alert)
                     .setMessage(R.string.ui_dialog_account_manager_token_error)
-                    .setPositiveButton(yes, new OnClickListener() {
+                    .setPositiveButton(R.string.yes, new OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             App.post(new FallbackAuthEvent(false));
                         }
                     })
-                    .setNegativeButton(android.R.string.no, null)
+                    .setNegativeButton(R.string.no, null)
                     .create();
         }
     }
@@ -344,7 +344,7 @@ public class Dialogs {
                 .setNegativeButton(cancel, null)
                 .setPositiveButton(ok, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        final Intent intent = getArguments().getParcelable(INTENT);
+                        final Intent intent = BundleCompat.getParcelable(getArguments(), INTENT, Intent.class);
                         getActivity().startActivityForResult(intent, REQUEST_WEB_AUTH);
                     }
                 }).create();

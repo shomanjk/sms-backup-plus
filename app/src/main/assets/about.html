@@ -29,6 +29,9 @@
 
     <h3>New in this release:</h3>
     <ul class="news">
+      <li>0.2.3 — Internal cleanup: replaced deprecated Android APIs
+        (<code>stopForeground(boolean)</code>, no-arg <code>Handler</code>,
+        untyped <code>Bundle</code> parcelable getters). No user-visible change.</li>
       <li>0.2.2 — Fix crash after WorkManager backup finish/cancel
         (<code>stopForeground</code> on a manually constructed service).</li>
       <li>0.2.1 — Fix stalled auto-backup: process start no longer cancels the

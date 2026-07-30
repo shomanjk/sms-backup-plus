@@ -221,7 +221,7 @@ public class SmsBackupService extends ServiceBase {
             appLog(state.isCanceled() ? R.string.app_log_backup_canceled : R.string.app_log_backup_finished);
             scheduleNextBackup(state);
             try {
-                stopForeground(true);
+                stopForeground(STOP_FOREGROUND_REMOVE);
                 stopSelf();
             } catch (RuntimeException e) {
                 // Some OEM builds throw from stopForeground()/stopSelf() when this service
