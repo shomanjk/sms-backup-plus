@@ -12,6 +12,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-07-30
+
+`versionCode` 1810.
+
+### Changed
+
+- Replace deprecated `stopForeground(boolean)` with `stopForeground(STOP_FOREGROUND_REMOVE)`
+  in `SmsBackupService` / `SmsRestoreService`.
+- Replace deprecated no-arg `Handler()` with `Handler(Looper.getMainLooper())` in `App` and
+  `SMSBackupPreferenceFragment`.
+- Replace deprecated `Bundle.getParcelable(String)` / `getParcelableArray(String)` with the
+  type-safe `BundleCompat` equivalents in `Dialogs` and `AccountManagerAuthActivity`.
+- Replace deprecated `android.R.string.yes` / `no` with the already-localized,
+  non-deprecated `android.R.string.ok` / `cancel` (avoids shipping an
+  untranslated confirmation dialog in non-English locales).
+- Bump CI actions (`actions/upload-artifact` to v7, `mikepenz/action-junit-report` to v6) to
+  clear a Node 20 deprecation warning.
+
 ## [0.2.2] - 2026-07-30
 
 `versionCode` 1809.

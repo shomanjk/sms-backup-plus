@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -158,7 +159,7 @@ public class AccountManagerAuthActivity extends ThemeActivity {
 
         @Override @NonNull
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Account[] accounts = (Account[]) getArguments().getParcelableArray(ACCOUNTS);
+            final Account[] accounts = (Account[]) BundleCompat.getParcelableArray(getArguments(), ACCOUNTS, Account.class);
             final int[] checkedItem = {0};
 
             final ColorStateList colorStateList = ContextCompat.getColorStateList(getContext(), R.color.secondary_text);

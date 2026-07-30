@@ -2,6 +2,7 @@ package com.zegoggles.smssync.activity.fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -19,7 +20,7 @@ public abstract class SMSBackupPreferenceFragment extends PreferenceFragmentComp
     public void onCreatePreferences(Bundle bundle, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
         preferences = new Preferences(getContext(), getPreferenceManager().getSharedPreferences());
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     void addPreferenceListener(String... prefKeys) {

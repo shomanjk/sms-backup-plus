@@ -149,7 +149,7 @@ public class SmsRestoreService extends ServiceBase {
             startForeground(RESTORE_ID, notification);
         } else {
             Log.d(TAG, "stopping service, state"+ this.state);
-            stopForeground(true);
+            stopForeground(STOP_FOREGROUND_REMOVE);
             stopSelf();
         }
     }
