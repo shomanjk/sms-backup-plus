@@ -220,8 +220,17 @@ public class SmsBackupService extends ServiceBase {
             appLogDebug(state.toString());
             appLog(state.isCanceled() ? R.string.app_log_backup_canceled : R.string.app_log_backup_finished);
             scheduleNextBackup(state);
-            stopForeground(true);
-            stopSelf();
+            try {
+                stopForeground(true);
+                stopSelf();
+            } catch (RuntimeException e) {
+                // Some OEM builds throw from stopForeground()/stopSelf() when this service
+                // instance wasn't started through the normal system lifecycle (e.g. the
+                // WorkManager-driven backup path in SmsBackupWorker). The backup itself has
+                // already completed/been scheduled above; don't let notification cleanup
+                // crash the whole process.
+                Log.w(TAG, "error stopping foreground service", e);
+            }
         }
     }
 
