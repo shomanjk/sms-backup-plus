@@ -135,7 +135,10 @@ public abstract class ServiceBase extends Service {
     }
 
     private int getWifiLockType() {
-        return WifiManager.WIFI_MODE_FULL_HIGH_PERF;
+        // The platform already silently remaps WIFI_MODE_FULL_HIGH_PERF requests to
+        // WIFI_MODE_FULL_LOW_LATENCY internally, so this is a no-op behavior-wise; it just
+        // avoids the deprecation warning. See WifiManager#WIFI_MODE_FULL_HIGH_PERF javadoc.
+        return WifiManager.WIFI_MODE_FULL_LOW_LATENCY;
     }
 
     protected synchronized void releaseLocks() {
