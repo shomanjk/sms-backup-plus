@@ -13,9 +13,14 @@ import com.zegoggles.smssync.service.exception.LocalizableException;
 import com.zegoggles.smssync.service.exception.MissingPermissionException;
 import com.zegoggles.smssync.service.exception.RequiresLoginException;
 
+import java.io.InterruptedIOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.EnumSet;
 
 public abstract class State {
+    private static final String IMAP_PREFIX_TEMP_ERROR = "Unable to get IMAP prefix";
+
     public final SmsSyncState state;
     public final Exception exception;
     public final @Nullable DataType dataType;
@@ -29,11 +34,12 @@ public abstract class State {
     public String getErrorMessage(Resources resources) {
         if (exception == null) return null;
 
-        if (exception instanceof MessagingException &&
-                "Unable to get IMAP prefix".equals(exception.getMessage())) {
-            return resources.getString(R.string.status_gmail_temp_error);
-        } else if (exception instanceof LocalizableException) {
+        if (exception instanceof LocalizableException) {
             return resources.getString(((LocalizableException) exception).errorResourceId());
+        } else if (isTransientNetworkFailure(exception)) {
+            // Socket flaps / temporary IMAP disconnects — same user-facing copy as the
+            // historical "Unable to get IMAP prefix" Gmail glitch.
+            return resources.getString(R.string.status_gmail_temp_error);
         } else {
             return exception.getLocalizedMessage();
         }
@@ -86,7 +92,32 @@ public abstract class State {
     }
 
     public boolean isConnectivityError() {
-        return exception instanceof ConnectivityException;
+        // ConnectivityException: explicit pre-flight skips (no network / Wi-Fi only).
+        // Transient network failures: IMAP mid-transfer socket aborts, DNS failures, etc.
+        // Both should be silent in the shade (logged only) and retried by WorkManager.
+        return exception instanceof ConnectivityException || isTransientNetworkFailure(exception);
+    }
+
+    /**
+     * True for failures that are almost certainly transient network / IMAP transport
+     * problems rather than auth, permissions, or app logic bugs.
+     *
+     * Walks the cause chain so {@code MessagingException: IO Error} wrapping a
+     * {@link SocketException} is recognized (seen on device during MMS upload).
+     */
+    static boolean isTransientNetworkFailure(@Nullable Throwable throwable) {
+        for (Throwable t = throwable; t != null; t = t.getCause()) {
+            if (t instanceof SocketException
+                    || t instanceof UnknownHostException
+                    || t instanceof InterruptedIOException) {
+                return true;
+            }
+            if (t instanceof MessagingException
+                    && IMAP_PREFIX_TEMP_ERROR.equals(t.getMessage())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isError() {
