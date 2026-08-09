@@ -29,6 +29,9 @@
 
     <h3>New in this release:</h3>
     <ul class="news">
+      <li>Transient IMAP/network connection aborts no longer post an error
+        notification; they are logged (with exception detail) and retried.
+        Auth, permission, and other messaging errors still notify as before.</li>
       <li>0.2.3 — Internal cleanup: replaced deprecated Android APIs
         (<code>stopForeground(boolean)</code>, no-arg <code>Handler</code>,
         untyped <code>Bundle</code> parcelable getters). No user-visible change.</li>
