@@ -7,14 +7,13 @@
   </head>
 
   <body>
-    <p><strong>Unofficial experimental fork</strong>
+    <p><strong>Unofficial maintained fork</strong>
       (<a href="https://github.com/shomanjk/sms-backup-plus">shomanjk/sms-backup-plus</a>).
       Not affiliated with
       <a href="https://github.com/jberkel">jberkel</a> or
       <a href="https://github.com/henrichg">henrichg</a>.
-      <strong>Not ready for daily use</strong> — WorkManager has replaced
-      JobDispatcher; confirm auto-backup on your phone (especially RCS /
-      OEM battery limits) before relying on it.</p>
+      Automatic backup uses WorkManager. Some OEM battery savers can still
+      delay background jobs.</p>
 
     <p>
       <small>Upstream author:
@@ -29,6 +28,9 @@
 
     <h3>New in this release:</h3>
     <ul class="news">
+      <li>0.2.5 — Dropped the in-app “experimental / not ready for daily use”
+        warnings after device testing. Still an unofficial fork, not affiliated
+        with jberkel or henrichg.</li>
       <li>0.2.4 — Transient IMAP/network connection aborts no longer post an
         error notification; they are logged (with exception detail) and retried.
         Auth, permission, and other messaging errors still notify as before.</li>

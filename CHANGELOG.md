@@ -1,16 +1,26 @@
 # Changelog
 
-All notable changes to **this unofficial experimental fork**
+All notable changes to **this unofficial maintained fork**
 ([shomanjk/sms-backup-plus](https://github.com/shomanjk/sms-backup-plus))
 are documented in this file.
 
-This project uses its own SemVer (`0.x` while experimental). Version numbers
+This project uses its own SemVer (`0.x` while pre-1.0). Version numbers
 here are **not** jberkel SMS Backup+ releases and are independent of henrichg
 `1.7.0`.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.2.5] - 2026-08-18
+
+`versionCode` 1812.
+
+### Changed
+
+- Drop in-app Welcome / What's new / About “experimental” and “not ready for
+  daily use” warnings after maintainer device testing. Keep unofficial-fork
+  and same-`applicationId` install notes. README matches.
 
 ## [0.2.4] - 2026-08-18
 
