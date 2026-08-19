@@ -12,6 +12,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-08-18
+
+`versionCode` 1811.
+
+### Changed
+
+- Transient IMAP/network failures (`SocketException`, DNS failures, timeouts, and the
+  known “Unable to get IMAP prefix” Gmail glitch) are treated like other connectivity
+  skips: logged with exception detail and retried by WorkManager, without posting an
+  “SMSBackup+ error” notification. Auth, permission, and other messaging errors still
+  notify as before.
+
 ## [0.2.3] - 2026-07-30
 
 `versionCode` 1810.

@@ -244,7 +244,15 @@ public class SmsBackupService extends ServiceBase {
                     getString(getAuthPreferences().useXOAuth() ? R.string.status_auth_failure_details_xoauth : R.string.status_auth_failure_details_plain)));
             }
         } else if (state.isConnectivityError()) {
-            appLog(R.string.app_log_backup_failed_connectivity, state.getDetailedErrorMessage(getResources()));
+            // Append exception detail outside the translated template so locales that
+            // override app_log_backup_failed_connectivity without a format placeholder
+            // still keep diagnostics in sms_backup_plus.log.
+            final String detail = state.getDetailedErrorMessage(getResources());
+            if (detail == null) {
+                appLog(R.string.app_log_backup_failed_connectivity);
+            } else {
+                appLogMessage(getString(R.string.app_log_backup_failed_connectivity) + ": " + detail);
+            }
         } else if (state.isPermissionException()) {
             if (state.backupType != MANUAL) {
                 Bundle extras = new Bundle();

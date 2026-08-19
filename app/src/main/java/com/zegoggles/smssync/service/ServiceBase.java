@@ -175,6 +175,15 @@ public abstract class ServiceBase extends Service {
         }
     }
 
+    /** Append a fully built line to the app log (locale-safe when detail is joined in code). */
+    protected void appLogMessage(String message) {
+        if (appLog != null) {
+            appLog.append(message);
+        } else if (LOCAL_LOGV) {
+            Log.d(App.TAG, "AppLog: " + message);
+        }
+    }
+
     protected void appLogDebug(String message, Object... args) {
         if (getPreferences().isAppLogDebug() && appLog != null) {
             appLog.append(String.format(ENGLISH, message, args));
