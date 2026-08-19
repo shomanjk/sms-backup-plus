@@ -5,7 +5,7 @@ Guidance for AI agents and humans working in this repository.
 ## What this repo is
 
 - **Public GitHub:** https://github.com/shomanjk/sms-backup-plus
-- **Unofficial experimental fork** of [jberkel/sms-backup-plus](https://github.com/jberkel/sms-backup-plus). Not affiliated with jberkel or henrichg. **Not ready for daily use.**
+- **Unofficial maintained fork** of [jberkel/sms-backup-plus](https://github.com/jberkel/sms-backup-plus). Not affiliated with jberkel or henrichg.
 - **Local clone path (this machine):** this directory is the Cursor project root (historically also referred to as `sms-backup-plus-maintained`).
 
 ## Lineage
@@ -19,7 +19,7 @@ Guidance for AI agents and humans working in this repository.
 **Current app identity**
 
 - `applicationId`: `com.zegoggles.smssync` (same as Play / henrichg — sideload requires uninstall; signatures differ)
-- `versionName`: `0.2.4` / `versionCode`: `1811` (fork SemVer; independent of upstream)
+- `versionName`: `0.2.5` / `versionCode`: `1812` (fork SemVer; independent of upstream)
 - `minSdkVersion`: `24` (Android 7+)
 - `compileSdk`: `36` / `targetSdkVersion`: `35`
 
@@ -31,7 +31,7 @@ Guidance for AI agents and humans working in this repository.
    - Manifest `android:exported` on relevant receivers
    - `SmsBroadcastReceiver` / MMS registration from `App.onCreate()`
    - Incoming scheduler / related App + MainActivity wiring
-3. Documented experimental status in `README.md` and phases in `ROADMAP.md`.
+3. Documented fork status in `README.md` and phases in `ROADMAP.md`.
 4. **WorkManager migration** (branch `phase-2-workmanager`): `SmsBackupWorker` + rewritten `BackupJobs`; removed JobDispatcher / `SmsJobService` / `AlarmManagerDriver`. ContentUriTrigger primary for incoming; SMS/MMS broadcasts kept as secondary. Port informed by [Mibou/sms-backup-plus](https://github.com/Mibou/sms-backup-plus) `fix/calendar-display-name-android15` (no package rename).
 5. Fork release notes live in `CHANGELOG.md` (Keep a Changelog); upstream history archived in `CHANGES`.
 
@@ -40,10 +40,10 @@ Guidance for AI agents and humans working in this repository.
 See [ROADMAP.md](ROADMAP.md). Priority order:
 
 1. ~~Port henrichg trigger/receiver fixes~~ (largely done; still verify on device)
-2. ~~Replace Firebase JobDispatcher with WorkManager~~ (code done on `phase-2-workmanager`; **physical RCS/OEM verify before claiming auto-backup fixed**)
+2. ~~Replace Firebase JobDispatcher with WorkManager~~ (code done on `phase-2-workmanager`; maintainer physical-device checks passed)
 3. Harden for Android 14/15 (remaining OEM / Doze / restricted-settings testing)
 
-Do **not** claim auto-backup is fixed for daily use until physical-device verification in ROADMAP Phase 2 is checked off.
+Do **not** claim auto-backup is reliable on every OEM until Phase 3 device checks are done.
 
 ## Hot files
 
@@ -70,7 +70,7 @@ suggest updating**:
 5. `versionName` / `versionCode` in `app/build.gradle` plus this file and
    `.cursor/rules/fork-context.mdc` when bumping
 
-Do **not** claim auto-backup is fixed in those dialogs until physical-device Phase 2 checks pass.
+Do **not** claim auto-backup is reliable on every OEM in those dialogs; Phase 3 still covers Doze / battery-saver variance.
 
 ## Agent constraints
 

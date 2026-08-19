@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/shomanjk/sms-backup-plus/actions/workflows/ci.yml/badge.svg)](https://github.com/shomanjk/sms-backup-plus/actions/workflows/ci.yml)
 
-> [!CAUTION]
-> **This is an unofficial experimental fork.** It is not affiliated with [jberkel](https://github.com/jberkel) or [henrichg](https://github.com/henrichg), and it is **not ready for daily use**. JobDispatcher has been replaced with WorkManager; auto-backup still needs physical-device (RCS / OEM) verification before it is considered reliable.
+> [!NOTE]
+> **This is an unofficial maintained fork.** It is not affiliated with [jberkel](https://github.com/jberkel) or [henrichg](https://github.com/henrichg). Automatic backup uses WorkManager and has been verified on the maintainer's device; some OEM battery savers can still delay background jobs.
 
 ## Fork lineage
 
@@ -11,7 +11,7 @@ This fork is based on [jberkel/sms-backup-plus](https://github.com/jberkel/sms-b
 
 ## Installing this fork
 
-This fork is **not available on the Google Play Store**. Build or install an APK from this fork only for testing.
+This fork is **not available on the Google Play Store**. Build or sideload an APK from this repository.
 
 > [!WARNING]
 > This fork uses the same application ID, `com.zegoggles.smssync`, as the Play Store app and henrichg builds. Uninstall either of those builds before installing this one, or installation will fail because of a signing-certificate mismatch. Uninstalling wipes local sync preferences. If your messages are already backed up in IMAP, choose **Skip** on the first backup to avoid uploading them again.
@@ -19,7 +19,7 @@ This fork is **not available on the Google Play Store**. Build or install an APK
 ## Near-term roadmap
 
 1. ~~Port henrichg's scheduler and receiver fixes.~~
-2. ~~Replace Firebase JobDispatcher with WorkManager.~~ (in 0.2.0; device RCS/OEM verify pending)
+2. ~~Replace Firebase JobDispatcher with WorkManager.~~ (in 0.2.0; maintainer device checks passed)
 3. Harden backup behavior for Android 14 and 15.
 
 See [ROADMAP.md](ROADMAP.md) for details.

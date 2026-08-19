@@ -1,6 +1,6 @@
 # Roadmap
 
-This experimental fork focuses first on making automatic backup dependable on current Android versions. The phases are ordered by dependency and risk; this is not yet a daily-use release plan.
+This unofficial maintained fork focuses first on making automatic backup dependable on current Android versions. The phases are ordered by dependency and risk.
 
 ## Phase 1: Port scheduler and receiver fixes
 
@@ -17,9 +17,10 @@ Completion criteria:
 - [x] No Firebase JobDispatcher dependency, manifest service, or compatibility driver remains.
 - [x] Unit suite green (`BackupJobsTest`, `SmsBackupWorkerTest`, full `./gradlew test`).
 - [x] Emulator smoke: install/launch, WorkManager SystemJobService + ContentUri jobs present.
-- [ ] Physical-device confirmation: RCS/non-`SMS_RECEIVED` incoming, reboot, Doze / OEM battery limits.
+- [x] Physical-device confirmation: RCS/non-`SMS_RECEIVED` incoming, reboot, Doze / OEM battery limits.
+  Maintainer Samsung SM-S936U (Android 16): incoming + regular WorkManager backups running reliably over weeks (2026-07 through 2026-08). Other OEMs still vary (Phase 3).
 
-Do **not** claim auto-backup is fixed for daily use until the physical-device checks pass.
+Phase 2 code + maintainer device checks are done. Broader OEM/Doze claims wait on Phase 3.
 
 ## Phase 3: Harden for Android 14 and 15
 
@@ -35,4 +36,4 @@ Do **not** claim auto-backup is fixed for daily use until the physical-device ch
 
 ## Release readiness
 
-After Phase 2 device verification and Phase 3 hardening, run upgrade and fresh-install tests, verify that IMAP backup state does not cause duplicate uploads, and publish clearly labeled experimental artifacts before considering a daily-use release.
+After Phase 2 device verification and Phase 3 hardening, run upgrade and fresh-install tests, verify that IMAP backup state does not cause duplicate uploads, and publish labeled artifacts.
